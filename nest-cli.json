@@ -1,0 +1,57 @@
+{
+    "collection": "@nestjs/schematics",
+    "sourceRoot": "apps/api-gateway/src",
+    "monorepo": true,
+    "root": "apps/api-gateway",
+    "compilerOptions": {
+        "webpack": true,
+        "tsConfigPath": "apps/api-gateway/tsconfig.json"
+    },
+    "projects": {
+        "api-gateway": {
+            "type": "application",
+            "root": "apps/api-gateway",
+            "entryFile": "main",
+            "sourceRoot": "apps/api-gateway/src",
+            "compilerOptions": {
+                "tsConfigPath": "apps/api-gateway/tsconfig.json"
+            }
+        },
+        "auth": {
+            "type": "application",
+            "root": "apps/auth",
+            "entryFile": "main",
+            "sourceRoot": "apps/auth/src",
+            "compilerOptions": {
+                "tsConfigPath": "apps/auth/tsconfig.json"
+            }
+        },
+        "grpc": {
+            "type": "library",
+            "root": "libs/grpc",
+            "entryFile": "index",
+            "sourceRoot": "libs/grpc/src",
+            "compilerOptions": {
+                "tsConfigPath": "libs/grpc/tsconfig.json"
+            }
+        },
+        "typeorm": {
+            "type": "library",
+            "root": "libs/typeorm",
+            "entryFile": "index",
+            "sourceRoot": "libs/typeorm/src",
+            "compilerOptions": {
+                "tsConfigPath": "libs/typeorm/tsconfig.json"
+            }
+        },
+        "config": {
+            "type": "library",
+            "root": "libs/config",
+            "entryFile": "index",
+            "sourceRoot": "libs/config/src",
+            "compilerOptions": {
+                "tsConfigPath": "libs/config/tsconfig.json"
+            }
+        }
+    }
+}

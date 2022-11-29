@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: gm_database
+    restart: always
+    ports: 
+      - "5432:5432"
+    volumes:
+      - ./tmp/pg:/var/lib/gm-database/postgres/data
+    env_file:
+      - docker.env
+    networks:
+      - postgres
+
+  adminer:
+    image: adminer
+    container_name: pg_adminer_gm_db
+    restart: always
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./tmp/pgadmin:/var/lib/gm-database/pgadmin/.pgadmin
+    env_file:
+      - docker.env
+    networks:
+      - postgres
+
+networks:
+  postgres:
+    driver: bridge
+

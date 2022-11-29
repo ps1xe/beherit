@@ -1,0 +1,16 @@
+{
+    "name": "@beherit/grpc",
+    "type": "module",
+    "private": true,
+    "main": "./dist/src/index.js",
+    "version": "0.0.1",
+    "exports": {
+        ".": "./dist/src/index.js"
+    },
+    "scripts": {
+        "build": "tsc"
+    },
+    "dependencies": {
+
+    }
+}
