@@ -1,0 +1,35 @@
+{
+    "name": "@beherit/common",
+    "type": "module",
+    "private": true,
+    "main": "./dist/src/index.js",
+    "version": "0.0.1",
+    "exports": {
+        ".": "./dist/src/index.js",
+        "./decorators/*": "./dist/src/decorators/*.js"
+    },
+    "typesVersions": {
+        "*": {
+            "*": [
+                "./dist/src/*.d.ts"
+            ]
+        }
+    },
+
+    "scripts": {
+        "build": "tsc"
+    },
+    "dependencies": {
+        "@nestjs/common": "^8.0.0",
+        "@nestjs/core": "^8.0.0",
+        "@nestjs/platform-express": "^8.0.0",
+        "@types/multer": "^1.4.7",
+        "@types/uuid": "^9.0.0",
+        "nestjs-form-data": "^1.8.7",
+        "reflect-metadata": "^0.1.13",
+        "rimraf": "^3.0.2",
+        "rxjs": "^7.2.0"
+    }
+
+
+}
