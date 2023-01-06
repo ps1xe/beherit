@@ -8,7 +8,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { SoundsUploadService } from '../services/upload-sounds.service.js';
 import { Express } from 'express';
 import { Sound } from '@beherit/typeorm/entities/Sound';
-import { CurrentUserId } from '@beherit/common/decorators/current-user-id.decorator';
+// import { CurrentUserId } from '@beherit/common/decorators/current-user-id.decorator';
 
 @Controller('sound')
 export class S3SoundsController {

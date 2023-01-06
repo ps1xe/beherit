@@ -16,6 +16,6 @@ export class User extends BaseEntity {
   @Column({ name: 'password' })
   password!: string;
 
-  @OneToMany(() => Sound, (sounds) => sounds.user)
-  sounds!: Sound[];
+  // @OneToMany(() => Sound, (sounds) => sounds.user)
+  // sounds!: Sound[];
 }
