@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { typeorm } from './typeorm.js';
+import { typeorm } from '@beherit/typeorm/typeorm-connection';
 import { User } from '@beherit/typeorm/entities/User';
 
 @Injectable()

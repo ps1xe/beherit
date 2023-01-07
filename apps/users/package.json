@@ -1,10 +1,10 @@
 {
-    "name": "sounds",
+    "name": "users",
     "version": "0.0.1",
     "description": "",
     "author": "",
-    "private": true,
     "type": "module",
+    "private": true,
     "license": "UNLICENSED",
     "scripts": {
         "prebuild": "rimraf dist",
@@ -23,20 +23,14 @@
     },
     "dependencies": {
         "@beherit/config": "*",
-        "@beherit/typeorm": "*",
         "@beherit/common": "*",
+        "@beherit/typeorm": "*",
         "@nestjs/common": "^8.0.0",
         "@nestjs/core": "^8.0.0",
         "@nestjs/platform-express": "^8.0.0",
-        "@types/multer": "^1.4.7",
-        "@types/uuid": "^9.0.0",
-        "class-transformer": "^0.5.1",
-        "class-validator": "^0.14.0",
-        "nestjs-form-data": "^1.8.7",
         "reflect-metadata": "^0.1.13",
         "rimraf": "^3.0.2",
-        "rxjs": "^7.2.0",
-        "uuid": "^9.0.0"
+        "rxjs": "^7.2.0"
     },
     "devDependencies": {
         "@nestjs/cli": "^8.0.0",

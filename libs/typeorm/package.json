@@ -6,6 +6,7 @@
     "version": "0.0.1",
     "exports": {
         ".": "./dist/src/index.js",
+        "./typeorm-connection": "./dist/src/typeorm-connection.js",
         "./entities/*": "./dist/src/entities/*.js"
     },
     "typesVersions": {

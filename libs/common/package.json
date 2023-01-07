@@ -6,7 +6,8 @@
     "version": "0.0.1",
     "exports": {
         ".": "./dist/src/index.js",
-        "./decorators/*": "./dist/src/decorators/*.js"
+        "./decorators/*": "./dist/src/decorators/*.js",
+        "./s3/*": "./dist/src/s3/*.js"
     },
     "typesVersions": {
         "*": {
@@ -20,6 +21,8 @@
         "build": "tsc"
     },
     "dependencies": {
+        "aws-sdk": "^2.1287.0",
+        "@beherit/config": "*",
         "@nestjs/common": "^8.0.0",
         "@nestjs/core": "^8.0.0",
         "@nestjs/platform-express": "^8.0.0",
