@@ -4,7 +4,6 @@ import { resolve } from 'path';
 
 try {
   dotenv.config({ path: resolve(process.cwd(), '.env') });
-  console.log(process.cwd());
 } catch {}
 
 export const config = cleanEnv(process.env, {
@@ -28,8 +27,5 @@ export const config = cleanEnv(process.env, {
   }),
   S3_SIGNATURE_VERSION: str({
     default: 'v4',
-  }),
-  S3_REGION: str({
-    default: 'ru-central1',
   }),
 });
