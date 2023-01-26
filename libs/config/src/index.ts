@@ -20,12 +20,21 @@ export const config = cleanEnv(process.env, {
     default: 'SECRET_KEY',
   }),
   S3_ENDPOINT: str({
-    default: 'https://storage.yandexcloud.net',
+    default: 'http://localhost:9000/',
   }),
   S3_FORCE_PATH_STYLE: bool({
     default: true,
   }),
   S3_SIGNATURE_VERSION: str({
     default: 'v4',
+  }),
+  AUTH_SERVICE: str({
+    default: 'AUTH_SERVICE',
+  }),
+  AUTH_REPOSITORY: str({
+    default: 'AUTH_REPOSITORY',
+  }),
+  HASH_SALT: str({
+    default: '$ecret',
   }),
 });

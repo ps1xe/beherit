@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { s3 } from '@beherit/common/s3/s3-connection';
-import { typeorm } from '@beherit/typeorm/typeorm-connection';
+import { typeorm } from '../typeorm-connection.js';
 import { Sound } from '@beherit/typeorm/entities/Sound';
 import { config } from '@beherit/config';
 

@@ -3,6 +3,9 @@
   "compilerOptions": {
     "declaration": true,
     "outDir": "./dist",
+    "allowJs": true,
+    "checkJs": true,
+    "isolatedModules": true,
     "target": "esnext",
     "module": "ESNext",
     "moduleResolution": "node",

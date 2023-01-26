@@ -1,0 +1,28 @@
+{
+    "rootDir": ".",
+    "preset": "ts-jest/presets/default-esm",
+    "testMatch": [
+        "**/test/**/*.+(ts|tsx|js)",
+        "**/?(*.)+(spec|test).+(ts|tsx|js)"
+    ],
+    "testPathIgnorePatterns": [
+        "dist",
+        "node_modules"
+    ],
+    "testEnvironment": "node",
+    "modulePaths": ["<rootDir>"],
+    "moduleDirectories": ["node_modules", "src"],
+    "transform": {
+        "^.+\\.(t|j)s$": ["ts-jest",
+            {
+                "tsconfig": "tsconfig.json",
+                "useESM": true
+            }
+        ]
+    },
+    "coverageDirectory": "./coverage",
+    "moduleFileExtensions": ["js", "json", "ts"],
+    "transformIgnorePatterns": [
+        "<rootDir>.*(node_modules)(?!@beherit.*).*$"
+    ]
+}

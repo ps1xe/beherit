@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
-import { typeorm } from '@beherit/typeorm/typeorm-connection';
+import { typeorm } from '../typeorm-connection.js';
 import { Sound } from '@beherit/typeorm/entities/Sound';
 import { UploadSoundDto } from '../dto/upload-sound.dto.js';
 import { s3 } from '@beherit/common/s3/s3-connection';
@@ -13,7 +13,7 @@ export class SoundsUploadRepository {
       .upload({
         Bucket: config.S3_BUCKET_NAME,
         Body: uploadData.dataBuffer,
-        Key: `${uuid()}.png`,
+        Key: `${uuid()}.mp3`,
       })
       .promise();
 
