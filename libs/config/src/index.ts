@@ -35,6 +35,9 @@ export const config = cleanEnv(process.env, {
     default: 'AUTH_REPOSITORY',
   }),
   HASH_SALT: str({
+    default: '$alt',
+  }),
+  JWT_SECRET_KEY: str({
     default: '$ecret',
   }),
 });
