@@ -6,7 +6,7 @@
     "version": "0.0.1",
     "exports": {
         ".": "./dist/src/index.js",
-        "./protobufs/*": "./dist/src/protobufs/*.pb.ts"
+        "./protobufs/*": "./dist/src/protobufs/*.js"
     },
     "typesVersions": {
         "*": {

@@ -6,6 +6,7 @@ export const protobufPackage = "auth";
 
 export interface RegisterRequest {
   email: string;
+  username: string;
   password: string;
 }
 

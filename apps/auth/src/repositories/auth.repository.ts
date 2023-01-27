@@ -11,7 +11,6 @@ import { typeorm } from '../typeorm-connection.js';
 import { User } from '@beherit/typeorm/entities/User';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { config } from '@beherit/config';
 
 @Injectable()
 export class AuthRepository {
@@ -32,9 +31,16 @@ export class AuthRepository {
       return { status: HttpStatus.CONFLICT, error: ['Email already exists'] };
     }
 
-    const encodePassword = bcrypt.hashSync(password, config.HASH_SALT);
+    const salt = await bcrypt.genSalt(5);
+    const encodePassword = bcrypt.hashSync(password, salt);
 
-    typeorm.getRepository(User).save({ email, username, encodePassword });
+    const newUser = {
+      email: email,
+      username: username,
+      password: encodePassword,
+    };
+
+    typeorm.getRepository(User).save(newUser);
 
     return { status: HttpStatus.CREATED, error: null };
   }
