@@ -3,8 +3,10 @@ import {
   AUTH_SERVICE_NAME,
   LoginResponse,
   RegisterResponse,
+  UpdateTokensResponse,
 } from '@beherit/grpc/protobufs/auth.pb';
 import type {
+  UpdateTokensRequest,
   RegisterRequest,
   LoginRequest,
 } from '@beherit/grpc/protobufs/auth.pb';
@@ -34,5 +36,12 @@ export class AuthController {
     @Body() loginRequestBody: LoginRequest,
   ): Promise<Observable<LoginResponse>> {
     return this.svc.login(loginRequestBody);
+  }
+
+  @Post('updateTokens')
+  async updateTokens(
+    @Body() updateTokenBody: UpdateTokensRequest,
+  ): Promise<Observable<UpdateTokensResponse>> {
+    return this.svc.updateTokens(updateTokenBody);
   }
 }

@@ -6,6 +6,7 @@ service AuthService {
   rpc Register (RegisterRequest) returns (RegisterResponse) {}
   rpc Login (LoginRequest) returns (LoginResponse) {}
   rpc Validate (ValidateRequest) returns (ValidateResponse) {}
+  rpc UpdateTokens (UpdateTokensRequest) returns (UpdateTokensResponse) {}
 }
 
 // Register
@@ -17,8 +18,7 @@ message RegisterRequest {
 }
 
 message RegisterResponse {
-  int32 status = 1;
-  repeated string error = 2;
+  string error = 1;
 }
 
 // Login
@@ -29,8 +29,8 @@ message LoginRequest {
 }
 
 message LoginResponse {
-  int32 status = 1;
-  repeated string error = 2;
+  string error = 1;
+  string refreshToken = 2;
   string token = 3;
 }
 
@@ -41,7 +41,18 @@ message ValidateRequest {
 }
 
 message ValidateResponse {
-  int32 status = 1;
-  repeated string error = 2;
-  string userId = 3;
+  string error = 1;
+  string userId = 2;
+}
+
+// UpdateTokens
+
+message UpdateTokensRequest{
+  string refreshToken = 1;
+}
+
+message UpdateTokensResponse{
+  string error = 1;
+  string refreshToken = 2;
+  string token = 3;
 }

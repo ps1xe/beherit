@@ -11,8 +11,7 @@ export interface RegisterRequest {
 }
 
 export interface RegisterResponse {
-  status: number;
-  error: string[];
+  error: string;
 }
 
 export interface LoginRequest {
@@ -21,8 +20,8 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  status: number;
-  error: string[];
+  error: string;
+  refreshToken: string;
   token: string;
 }
 
@@ -31,9 +30,18 @@ export interface ValidateRequest {
 }
 
 export interface ValidateResponse {
-  status: number;
-  error: string[];
+  error: string;
   userId: string;
+}
+
+export interface UpdateTokensRequest {
+  refreshToken: string;
+}
+
+export interface UpdateTokensResponse {
+  error: string;
+  refreshToken: string;
+  token: string;
 }
 
 export const AUTH_PACKAGE_NAME = "auth";
@@ -44,6 +52,8 @@ export interface AuthServiceClient {
   login(request: LoginRequest): Observable<LoginResponse>;
 
   validate(request: ValidateRequest): Observable<ValidateResponse>;
+
+  updateTokens(request: UpdateTokensRequest): Observable<UpdateTokensResponse>;
 }
 
 export interface AuthServiceController {
@@ -52,11 +62,15 @@ export interface AuthServiceController {
   login(request: LoginRequest): Promise<LoginResponse> | Observable<LoginResponse> | LoginResponse;
 
   validate(request: ValidateRequest): Promise<ValidateResponse> | Observable<ValidateResponse> | ValidateResponse;
+
+  updateTokens(
+    request: UpdateTokensRequest,
+  ): Promise<UpdateTokensResponse> | Observable<UpdateTokensResponse> | UpdateTokensResponse;
 }
 
 export function AuthServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["register", "login", "validate"];
+    const grpcMethods: string[] = ["register", "login", "validate", "updateTokens"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("AuthService", method)(constructor.prototype[method], method, descriptor);

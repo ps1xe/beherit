@@ -16,6 +16,9 @@ export class User extends BaseEntity {
   @Column({ name: 'password' })
   password!: string;
 
+  @Column({ name: 'refreshToken' })
+  refreshToken: string;
+
   // @OneToMany(() => Sound, (sounds) => sounds.user)
   // sounds!: Sound[];
 }

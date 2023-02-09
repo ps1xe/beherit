@@ -31,10 +31,10 @@ export const config = cleanEnv(process.env, {
   AUTH_SERVICE: str({
     default: 'AUTH_SERVICE',
   }),
-  AUTH_REPOSITORY: str({
-    default: 'AUTH_REPOSITORY',
-  }),
   JWT_SECRET_KEY: str({
     default: '$ecret',
+  }),
+  JWT_REFRESH_SECRET_KEY: str({
+    default: 'refre$h_$ecret',
   }),
 });
