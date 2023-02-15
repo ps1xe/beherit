@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package user;
+
+service UserService{
+    rpc GetUrlToDownloadSound (GetUrlSoundRequest) returns (GetUrlSoundResponse) {}
+    rpc GetListSounds (GetListSoundsRequest) returns (GetListSoundsResponse) {}
+    rpc ChangingAvatar (ChangingAvatarRequest) returns (Empty) {}
+    rpc ChangePassword (ChangePasswordRequest) returns (Empty) {}
+}
+
+//GetUrlToDownloadSound
+
+message GetUrlSoundRequest{
+    string token = 1;
+    string soundId = 2;
+}
+
+message GetUrlSoundResponse{
+    string url = 1;
+}
+
+//GetListSounds
+
+message GetListSoundsRequest{
+    string token = 1;
+}
+
+message GetListSoundsResponse{
+    repeated string sounds = 1;
+}
+
+//ChangingAvatar
+
+message ChangingAvatarRequest{
+    string token = 1;
+    string avatar = 2;
+}
+
+
+//ChangePassword
+
+message ChangePasswordRequest{
+    string token = 1;
+    string currentPassword = 2;
+    string newPassword = 3;
+}
+
+//Common massages
+
+message Empty{}

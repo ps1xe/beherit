@@ -11,7 +11,8 @@ export interface RegisterRequest {
 }
 
 export interface RegisterResponse {
-  error: string;
+  refreshToken: string;
+  token: string;
 }
 
 export interface LoginRequest {
@@ -20,7 +21,6 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  error: string;
   refreshToken: string;
   token: string;
 }
@@ -30,7 +30,6 @@ export interface ValidateRequest {
 }
 
 export interface ValidateResponse {
-  error: string;
   userId: string;
 }
 
@@ -39,7 +38,6 @@ export interface UpdateTokensRequest {
 }
 
 export interface UpdateTokensResponse {
-  error: string;
   refreshToken: string;
   token: string;
 }

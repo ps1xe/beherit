@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package sounds;
+
+service SoundsService{
+    rpc UploadSound (UploadSoundRequest) returns (Empty) {}
+}
+
+//UploadSound
+
+message UploadSoundRequest{
+    string token = 1;
+    string buffer = 2;
+}
+
+//Common massages
+
+message Empty{}

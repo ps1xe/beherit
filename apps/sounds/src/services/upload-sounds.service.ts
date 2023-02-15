@@ -1,15 +1,29 @@
-import { Sound } from '@beherit/typeorm/entities/Sound';
 import { Injectable } from '@nestjs/common';
+import { v4 as uuid } from 'uuid';
+import { typeorm } from '../typeorm-connection.js';
+import { Sound } from '@beherit/typeorm/entities/Sound';
 import { UploadSoundDto } from '../dto/upload-sound.dto.js';
-import { SoundsUploadRepository } from '../repositories/upload-sounds.repository.js';
+import { config } from '@beherit/config';
+import { s3 } from '../s3-connection.js';
 
 @Injectable()
 export class SoundsUploadService {
-  constructor(
-    private readonly soundsUploadRepository: SoundsUploadRepository,
-  ) {}
-
   async uploadSound(uploadData: UploadSoundDto): Promise<Sound> {
-    return this.soundsUploadRepository.uploadSound(uploadData);
+    const uploadResult = await s3
+      .upload({
+        Bucket: config.S3_BUCKET_NAME,
+        Body: uploadData.dataBuffer,
+        Key: `${uuid()}.mp3`,
+      })
+      .promise();
+
+    const soundStorageInDB = {
+      key: uploadResult.Key,
+      // userId: uploadData.userId,
+    };
+
+    const filestored = typeorm.getRepository(Sound).save(soundStorageInDB);
+
+    return filestored;
   }
 }

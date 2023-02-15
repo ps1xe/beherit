@@ -18,7 +18,8 @@ message RegisterRequest {
 }
 
 message RegisterResponse {
-  string error = 1;
+  string refreshToken = 1;
+  string token = 2;
 }
 
 // Login
@@ -29,9 +30,8 @@ message LoginRequest {
 }
 
 message LoginResponse {
-  string error = 1;
-  string refreshToken = 2;
-  string token = 3;
+  string refreshToken = 1;
+  string token = 2;
 }
 
 // Validate
@@ -41,8 +41,7 @@ message ValidateRequest {
 }
 
 message ValidateResponse {
-  string error = 1;
-  string userId = 2;
+  string userId = 1;
 }
 
 // UpdateTokens
@@ -52,7 +51,6 @@ message UpdateTokensRequest{
 }
 
 message UpdateTokensResponse{
-  string error = 1;
-  string refreshToken = 2;
-  string token = 3;
+  string refreshToken = 1;
+  string token = 2;
 }

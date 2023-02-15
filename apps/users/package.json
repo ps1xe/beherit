@@ -22,11 +22,13 @@
         "test:e2e": "jest --config ./test/jest-e2e.json"
     },
     "dependencies": {
-        "@beherit/config": "*",
         "@beherit/common": "*",
+        "@beherit/grpc": "*",
+        "@beherit/config": "*",
         "@beherit/typeorm": "*",
         "@nestjs/common": "^8.0.0",
         "@nestjs/core": "^8.0.0",
+        "@nestjs/microservices": "^9.3.9",
         "@nestjs/platform-express": "^8.0.0",
         "reflect-metadata": "^0.1.13",
         "rimraf": "^3.0.2",

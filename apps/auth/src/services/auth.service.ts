@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { RegisterRequestDto } from '../dto/register-request.dto.js';
 import { LoginRequestDto } from '../dto/login-request.dto.js';
 import { ValidateRequestDto } from '../dto/validate-request.dto.js';
-import { typeorm } from '../typeorm-connection.js';
 import { User } from '@beherit/typeorm/entities/User';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -11,17 +10,24 @@ import { RpcException } from '@nestjs/microservices';
 import { ValidateResponseDto } from '../dto/validate-response.dto.js';
 import { UpdateTokensDto } from '../dto/update-tokens-response.dto.js';
 import { LoginResponseDto } from '../dto/login-response.dto.js';
+import { RegisterResponseDto } from '../dto/register-response.dto.js';
+import { randomUUID } from 'crypto';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly jwtService: JwtService) {}
+  userRepository: Repository<User>;
+
+  constructor(private readonly jwtService: JwtService) {
+    this.userRepository = this.userRepository;
+  }
 
   async register({
     username,
     email,
     password,
-  }: RegisterRequestDto): Promise<void> {
-    const user = await typeorm.getRepository(User).findOne({
+  }: RegisterRequestDto): Promise<RegisterResponseDto> {
+    const user = await this.userRepository.findOne({
       where: {
         email: email,
       },
@@ -32,20 +38,40 @@ export class AuthService {
     }
 
     const salt = await bcrypt.genSalt(5);
-    const encodePassword = bcrypt.hashSync(password, salt);
+    const encodePassword = await bcrypt.hashSync(password, salt);
+
+    const token = await this.jwtService.signAsync(
+      {
+        id: randomUUID(),
+        email: email,
+      },
+      { secret: config.JWT_SECRET_KEY, expiresIn: '30m' },
+    );
+
+    const refreshToken = await this.jwtService.signAsync(
+      {
+        id: randomUUID(),
+        email: email,
+      },
+      { secret: config.JWT_REFRESH_SECRET_KEY, expiresIn: '60d' },
+    );
+
+    const hashedRefreshToken = await bcrypt.hashSync(refreshToken, salt);
 
     const newUser = {
       email: email,
       username: username,
       password: encodePassword,
-      refreshToken: 'The user has not logged on yet',
+      refreshToken: hashedRefreshToken,
     };
 
-    typeorm.getRepository(User).save(newUser);
+    this.userRepository.save(newUser);
+
+    return { token: token, refreshToken: refreshToken };
   }
 
   async login({ email, password }: LoginRequestDto): Promise<LoginResponseDto> {
-    const user = await typeorm.getRepository(User).findOne({
+    const user = await this.userRepository.findOne({
       where: {
         email: email,
       },
@@ -55,14 +81,14 @@ export class AuthService {
       throw new RpcException('Email not found');
     }
 
-    const isPasswordValid = bcrypt.compareSync(password, user.password);
+    const isPasswordValid = await bcrypt.compareSync(password, user.password);
     if (!isPasswordValid) {
       throw new RpcException('Password wrong');
     }
 
     const token = await this.jwtService.signAsync(
       {
-        id: user.id,
+        id: randomUUID(),
         email: user.email,
       },
       { secret: config.JWT_SECRET_KEY, expiresIn: '30m' },
@@ -70,16 +96,16 @@ export class AuthService {
 
     const refreshToken = await this.jwtService.signAsync(
       {
-        id: user.id,
+        id: randomUUID(),
         email: user.email,
       },
       { secret: config.JWT_REFRESH_SECRET_KEY, expiresIn: '60d' },
     );
 
     const salt = await bcrypt.genSalt(5);
-    const hashedRefreshToken = bcrypt.hashSync(refreshToken, salt);
+    const hashedRefreshToken = await bcrypt.hashSync(refreshToken, salt);
 
-    typeorm.getRepository(User).save({
+    this.userRepository.save({
       id: user.id,
       email: user.email,
       username: user.username,
@@ -93,28 +119,34 @@ export class AuthService {
   }
 
   async validate({ token }: ValidateRequestDto): Promise<ValidateResponseDto> {
-    const decoded = this.jwtService.verify(token);
+    const decoded = this.jwtService.verify(token, {
+      secret: config.JWT_REFRESH_SECRET_KEY,
+    });
     if (!decoded) {
       throw new RpcException('Token is invalid');
     }
 
-    const user = await typeorm.getRepository(User).findOne(decoded.id);
+    const user = await this.userRepository.findOne({
+      where: { email: decoded.email },
+    });
     if (!user) {
       throw new RpcException('User not found');
     }
-    return { userId: decoded.id };
+    return { userId: user.id };
   }
 
   async updateTokens({ refreshToken }): Promise<UpdateTokensDto> {
-    const decoded = await this.jwtService.verify(refreshToken);
-    const user = await typeorm
-      .getRepository(User)
-      .findOne({ where: { id: decoded.id } });
+    const decoded = await this.jwtService.verify(refreshToken, {
+      secret: config.JWT_REFRESH_SECRET_KEY,
+    });
+    const user = await this.userRepository.findOne({
+      where: { email: decoded.email },
+    });
     if (!user) {
       throw new RpcException('User not found');
     }
 
-    const coincidenceTokens = bcrypt.compareSync(
+    const coincidenceTokens = await bcrypt.compareSync(
       refreshToken,
       user.refreshToken,
     );
@@ -125,7 +157,7 @@ export class AuthService {
 
     const updatedToken = await this.jwtService.signAsync(
       {
-        id: user.id,
+        id: randomUUID(),
         email: user.email,
       },
       { secret: config.JWT_SECRET_KEY, expiresIn: '30m' },
@@ -133,19 +165,19 @@ export class AuthService {
 
     const updatedRefreshToken = await this.jwtService.signAsync(
       {
-        id: user.id,
+        id: randomUUID(),
         email: user.email,
       },
       { secret: config.JWT_REFRESH_SECRET_KEY, expiresIn: '60d' },
     );
 
-    const salt = bcrypt.genSalt(5);
-    const hashedUpdatedRefreshToken = bcrypt.hashSync(
+    const salt = await bcrypt.genSalt(5);
+    const hashedUpdatedRefreshToken = await bcrypt.hashSync(
       updatedRefreshToken,
       salt,
     );
 
-    typeorm.getRepository(User).save({
+    this.userRepository.save({
       ...user,
       refreshToken: hashedUpdatedRefreshToken,
     });

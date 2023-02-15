@@ -11,10 +11,7 @@ import { LoginRequestDto } from '../dto/login-request.dto.js';
 import { RegisterRequestDto } from '../dto/register-request.dto.js';
 import { UpdateTokensRequestDto } from '../dto/update-tokens-request.dto.js';
 import { ValidateRequestDto } from '../dto/validate-request.dto.js';
-import { LoginExceptionFilter } from '../filters/login-exception.filter.js';
-import { RegistrationExceptionFilter } from '../filters/registration-exception.filter.js';
-import { UpdateTokensExceptionFilter } from '../filters/update-tokens-exception.filter.js';
-import { ValidateExceptionFilter } from '../filters/validate-exception.filter.js';
+import { RpcExceptionFilter } from '../filters/rpc-exception.filter.js';
 import { AuthService } from '../services/auth.service.js';
 
 @Controller()
@@ -24,36 +21,38 @@ export class AuthController {
     private readonly authService: AuthService,
   ) {}
 
-  @UseFilters(new RegistrationExceptionFilter())
+  @UseFilters(new RpcExceptionFilter())
   @GrpcMethod(config.AUTH_SERVICE, 'Register')
   async register(
     registerRequest: RegisterRequestDto,
   ): Promise<RegisterResponse> {
-    this.authService.register(registerRequest);
-    return { error: null };
+    const registerResponse = await this.authService.register(registerRequest);
+    return {
+      token: registerResponse.token,
+      refreshToken: registerResponse.refreshToken,
+    };
   }
 
-  @UseFilters(new LoginExceptionFilter())
+  @UseFilters(new RpcExceptionFilter())
   @GrpcMethod(config.AUTH_SERVICE, 'Login')
   async login(loginRequest: LoginRequestDto): Promise<LoginResponse> {
     const loginResponse = await this.authService.login(loginRequest);
     return {
-      error: null,
       token: loginResponse.token,
       refreshToken: loginResponse.refreshToken,
     };
   }
 
-  @UseFilters(new ValidateExceptionFilter())
+  @UseFilters(new RpcExceptionFilter())
   @GrpcMethod(config.AUTH_SERVICE, 'Validate')
   async validate(
     validateRequest: ValidateRequestDto,
   ): Promise<ValidateResponse> {
     const validateResponse = await this.authService.validate(validateRequest);
-    return { error: null, userId: validateResponse.userId };
+    return { userId: validateResponse.userId };
   }
 
-  @UseFilters(new UpdateTokensExceptionFilter())
+  @UseFilters(new RpcExceptionFilter())
   @GrpcMethod(config.AUTH_SERVICE, 'UpdateTokens')
   async updateTokens(
     updateTokensRequest: UpdateTokensRequestDto,
@@ -62,7 +61,6 @@ export class AuthController {
       updateTokensRequest,
     );
     return {
-      error: null,
       token: updateTokensResponse.token,
       refreshToken: updateTokensResponse.refreshToken,
     };

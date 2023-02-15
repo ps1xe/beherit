@@ -1,10 +1,26 @@
 import { Injectable } from '@nestjs/common';
-import { GetSoundsRepositoriy } from '../repositories/get-sounds.repository.js';
+import { s3 } from '@beherit/common/s3/s3-connection';
+import { typeorm } from '../typeorm-connection.js';
+import { Sound } from '@beherit/typeorm/entities/Sound';
+import { config } from '@beherit/config';
 
 @Injectable()
 export class GetSoundsService {
-  constructor(private readonly getSoundRepository: GetSoundsRepositoriy) {}
   async getUrlToDownload(id: string): Promise<string> {
-    return this.getSoundRepository.getUrlToDownload(id);
+    const Key = await typeorm.getRepository(Sound).findOne({
+      where: {
+        id: id,
+      },
+    });
+
+    const paramsForUrl = {
+      Bucket: config.S3_BUCKET_NAME,
+      Expires: 5000,
+      Key: Key.key,
+    };
+
+    const url = await s3.getSignedUrlPromise('getObject', paramsForUrl);
+
+    return url;
   }
 }
