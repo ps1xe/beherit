@@ -28,13 +28,13 @@ export const config = cleanEnv(process.env, {
   S3_SIGNATURE_VERSION: str({
     default: 'v4',
   }),
-  AUTH_SERVICE: str({
-    default: 'AUTH_SERVICE',
-  }),
   JWT_SECRET_KEY: str({
     default: '$ecret',
   }),
   JWT_REFRESH_SECRET_KEY: str({
     default: 'refre$h_$ecret',
+  }),
+  SECRET_COOKIES_KEY: str({
+    default: '$ecret_cookies_key',
   }),
 });

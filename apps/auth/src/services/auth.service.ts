@@ -8,18 +8,21 @@ import * as bcrypt from 'bcrypt';
 import { config } from '@beherit/config';
 import { RpcException } from '@nestjs/microservices';
 import { ValidateResponseDto } from '../dto/validate-response.dto.js';
-import { UpdateTokensDto } from '../dto/update-tokens-response.dto.js';
+import { UpdateTokensResponseDto } from '../dto/update-tokens-response.dto.js';
 import { LoginResponseDto } from '../dto/login-response.dto.js';
 import { RegisterResponseDto } from '../dto/register-response.dto.js';
 import { randomUUID } from 'crypto';
 import { Repository } from 'typeorm';
+import { typeorm } from '../typeorm-connection.js';
+import { UpdateTokensRequestDto } from '../dto/update-tokens-request.dto.js';
+import { RestorePasswordRequestDto } from '../dto/restore-password-request.dto.js';
 
 @Injectable()
 export class AuthService {
   userRepository: Repository<User>;
 
   constructor(private readonly jwtService: JwtService) {
-    this.userRepository = this.userRepository;
+    this.userRepository = typeorm.getRepository(User);
   }
 
   async register({
@@ -135,7 +138,9 @@ export class AuthService {
     return { userId: user.id };
   }
 
-  async updateTokens({ refreshToken }): Promise<UpdateTokensDto> {
+  async updateTokens({
+    refreshToken,
+  }: UpdateTokensRequestDto): Promise<UpdateTokensResponseDto> {
     const decoded = await this.jwtService.verify(refreshToken, {
       secret: config.JWT_REFRESH_SECRET_KEY,
     });
@@ -183,5 +188,12 @@ export class AuthService {
     });
 
     return { token: updatedToken, refreshToken: updatedRefreshToken };
+  }
+
+  async restorePassword({
+    email,
+    password,
+  }: RestorePasswordRequestDto): Promise<void> {
+    //ssss
   }
 }

@@ -1,4 +1,4 @@
-export class UpdateTokensDto {
+export class UpdateTokensResponseDto {
   token: string;
 
   refreshToken: string;

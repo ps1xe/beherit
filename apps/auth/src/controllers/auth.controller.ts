@@ -1,5 +1,5 @@
-import { config } from '@beherit/config';
 import {
+  AUTH_SERVICE_NAME,
   LoginResponse,
   RegisterResponse,
   UpdateTokensResponse,
@@ -17,12 +17,12 @@ import { AuthService } from '../services/auth.service.js';
 @Controller()
 export class AuthController {
   constructor(
-    @Inject(config.AUTH_SERVICE)
+    @Inject(AUTH_SERVICE_NAME)
     private readonly authService: AuthService,
   ) {}
 
   @UseFilters(new RpcExceptionFilter())
-  @GrpcMethod(config.AUTH_SERVICE, 'Register')
+  @GrpcMethod(AUTH_SERVICE_NAME, 'Register')
   async register(
     registerRequest: RegisterRequestDto,
   ): Promise<RegisterResponse> {
@@ -34,7 +34,7 @@ export class AuthController {
   }
 
   @UseFilters(new RpcExceptionFilter())
-  @GrpcMethod(config.AUTH_SERVICE, 'Login')
+  @GrpcMethod(AUTH_SERVICE_NAME, 'Login')
   async login(loginRequest: LoginRequestDto): Promise<LoginResponse> {
     const loginResponse = await this.authService.login(loginRequest);
     return {
@@ -44,7 +44,7 @@ export class AuthController {
   }
 
   @UseFilters(new RpcExceptionFilter())
-  @GrpcMethod(config.AUTH_SERVICE, 'Validate')
+  @GrpcMethod(AUTH_SERVICE_NAME, 'Validate')
   async validate(
     validateRequest: ValidateRequestDto,
   ): Promise<ValidateResponse> {
@@ -53,7 +53,7 @@ export class AuthController {
   }
 
   @UseFilters(new RpcExceptionFilter())
-  @GrpcMethod(config.AUTH_SERVICE, 'UpdateTokens')
+  @GrpcMethod(AUTH_SERVICE_NAME, 'UpdateTokens')
   async updateTokens(
     updateTokensRequest: UpdateTokensRequestDto,
   ): Promise<UpdateTokensResponse> {

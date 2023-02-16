@@ -3,6 +3,7 @@ import { AuthController } from './controllers/auth.controller.js';
 import { AuthService } from './services/auth.service.js';
 import { config } from '@beherit/config';
 import { JwtModule } from '@nestjs/jwt';
+import { AUTH_SERVICE_NAME } from '@beherit/grpc/protobufs/auth.pb';
 
 @Module({
   imports: [
@@ -12,6 +13,6 @@ import { JwtModule } from '@nestjs/jwt';
     }),
   ],
   controllers: [AuthController],
-  providers: [{ provide: config.AUTH_SERVICE, useClass: AuthService }],
+  providers: [{ provide: AUTH_SERVICE_NAME, useClass: AuthService }],
 })
 export class AuthModule {}

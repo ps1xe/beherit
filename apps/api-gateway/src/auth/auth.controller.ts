@@ -1,18 +1,25 @@
 import {
   AuthServiceClient,
   AUTH_SERVICE_NAME,
-  LoginResponse,
-  RegisterResponse,
-  UpdateTokensResponse,
 } from '@beherit/grpc/protobufs/auth.pb';
 import type {
-  UpdateTokensRequest,
   RegisterRequest,
   LoginRequest,
 } from '@beherit/grpc/protobufs/auth.pb';
-import { Body, Controller, Inject, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Inject,
+  Post,
+  Put,
+  Res,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import type { ClientGrpc } from '@nestjs/microservices';
-import { Observable } from 'rxjs';
+import { lastValueFrom } from 'rxjs';
+import type { Request, Response } from 'express';
+import { AuthGuard } from './guard/auth.guard.js';
 
 @Controller('auth')
 export class AuthController {
@@ -27,21 +34,32 @@ export class AuthController {
   @Post('register')
   async register(
     @Body() registerRequestBody: RegisterRequest,
-  ): Promise<Observable<RegisterResponse>> {
-    return this.svc.register(registerRequestBody);
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<void> {
+    const tokens = await lastValueFrom(this.svc.register(registerRequestBody));
+    response.cookie('refreshToken', tokens.refreshToken);
+    response.cookie('token', tokens.token);
   }
 
   @Put('login')
   async login(
     @Body() loginRequestBody: LoginRequest,
-  ): Promise<Observable<LoginResponse>> {
-    return this.svc.login(loginRequestBody);
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<void> {
+    const tokens = await lastValueFrom(this.svc.login(loginRequestBody));
+    response.cookie('refreshToken', tokens.refreshToken);
+    response.cookie('token', tokens.token);
   }
 
   @Post('updateTokens')
   async updateTokens(
-    @Body() updateTokenBody: UpdateTokensRequest,
-  ): Promise<Observable<UpdateTokensResponse>> {
-    return this.svc.updateTokens(updateTokenBody);
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<void> {
+    const tokens = await lastValueFrom(
+      this.svc.updateTokens({ refreshToken: request.cookies.refreshToken }),
+    );
+    response.cookie('refreshToken', tokens.refreshToken);
+    response.cookie('token', tokens.token);
   }
 }
