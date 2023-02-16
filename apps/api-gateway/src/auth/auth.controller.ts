@@ -6,21 +6,10 @@ import type {
   RegisterRequest,
   LoginRequest,
 } from '@beherit/grpc/protobufs/auth.pb';
-import {
-  Body,
-  Controller,
-  Inject,
-  Post,
-  Put,
-  Res,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Inject, Post, Put, Res, Req } from '@nestjs/common';
 import type { ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import type { Request, Response } from 'express';
-import { AuthGuard } from './guard/auth.guard.js';
-
 @Controller('auth')
 export class AuthController {
   private svc: AuthServiceClient;

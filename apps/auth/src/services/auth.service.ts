@@ -15,7 +15,6 @@ import { randomUUID } from 'crypto';
 import { Repository } from 'typeorm';
 import { typeorm } from '../typeorm-connection.js';
 import { UpdateTokensRequestDto } from '../dto/update-tokens-request.dto.js';
-import { RestorePasswordRequestDto } from '../dto/restore-password-request.dto.js';
 
 @Injectable()
 export class AuthService {
@@ -122,8 +121,8 @@ export class AuthService {
   }
 
   async validate({ token }: ValidateRequestDto): Promise<ValidateResponseDto> {
-    const decoded = this.jwtService.verify(token, {
-      secret: config.JWT_REFRESH_SECRET_KEY,
+    const decoded = await this.jwtService.verify(token, {
+      secret: config.JWT_SECRET_KEY,
     });
     if (!decoded) {
       throw new RpcException('Token is invalid');
@@ -188,12 +187,5 @@ export class AuthService {
     });
 
     return { token: updatedToken, refreshToken: updatedRefreshToken };
-  }
-
-  async restorePassword({
-    email,
-    password,
-  }: RestorePasswordRequestDto): Promise<void> {
-    //ssss
   }
 }
