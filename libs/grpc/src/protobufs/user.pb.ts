@@ -5,7 +5,6 @@ import { Observable } from "rxjs";
 export const protobufPackage = "user";
 
 export interface GetUrlSoundRequest {
-  token: string;
   soundId: string;
 }
 
@@ -14,7 +13,7 @@ export interface GetUrlSoundResponse {
 }
 
 export interface GetListSoundsRequest {
-  token: string;
+  userId: string;
 }
 
 export interface GetListSoundsResponse {
@@ -22,12 +21,12 @@ export interface GetListSoundsResponse {
 }
 
 export interface ChangingAvatarRequest {
-  token: string;
+  userId: string;
   avatar: string;
 }
 
 export interface ChangePasswordRequest {
-  token: string;
+  userId: string;
   currentPassword: string;
   newPassword: string;
 }

@@ -14,14 +14,14 @@ import { ValidateRequestDto } from '../dto/validate-request.dto.js';
 import { RpcExceptionFilter } from '../filters/rpc-exception.filter.js';
 import { AuthService } from '../services/auth.service.js';
 
+@UseFilters(new RpcExceptionFilter())
 @Controller()
 export class AuthController {
   constructor(
-    @Inject(AUTH_SERVICE_NAME)
+    @Inject(AuthService)
     private readonly authService: AuthService,
   ) {}
 
-  @UseFilters(new RpcExceptionFilter())
   @GrpcMethod(AUTH_SERVICE_NAME, 'Register')
   async register(
     registerRequest: RegisterRequestDto,
@@ -33,7 +33,6 @@ export class AuthController {
     };
   }
 
-  @UseFilters(new RpcExceptionFilter())
   @GrpcMethod(AUTH_SERVICE_NAME, 'Login')
   async login(loginRequest: LoginRequestDto): Promise<LoginResponse> {
     const loginResponse = await this.authService.login(loginRequest);
@@ -43,7 +42,6 @@ export class AuthController {
     };
   }
 
-  @UseFilters(new RpcExceptionFilter())
   @GrpcMethod(AUTH_SERVICE_NAME, 'Validate')
   async validate(
     validateRequest: ValidateRequestDto,
@@ -52,7 +50,6 @@ export class AuthController {
     return { userId: validateResponse.userId };
   }
 
-  @UseFilters(new RpcExceptionFilter())
   @GrpcMethod(AUTH_SERVICE_NAME, 'UpdateTokens')
   async updateTokens(
     updateTokensRequest: UpdateTokensRequestDto,

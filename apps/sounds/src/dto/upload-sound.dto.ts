@@ -1,8 +1,8 @@
 import { IsUUID } from 'class-validator';
 
 export class UploadSoundDto {
-  dataBuffer: Buffer;
+  buffer: Buffer;
 
-  // @IsUUID()
-  // userId: string;
+  @IsUUID()
+  userId: string;
 }

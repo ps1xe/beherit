@@ -1,4 +1,3 @@
-import { AUTH_SERVICE_NAME } from '@beherit/grpc/protobufs/auth.pb';
 import {
   CanActivate,
   ExecutionContext,

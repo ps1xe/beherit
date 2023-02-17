@@ -10,7 +10,8 @@ export class Sound extends BaseEntity {
   @Column({ name: 'key' })
   key!: string;
 
-  // @Column({ name: 'userId' })
+  @Column({ name: 'userId' })
+  userId!: string;
   // userId!: User['id'];
 
   // @ManyToOne(() => User, (user) => user.sounds)

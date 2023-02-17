@@ -6,17 +6,29 @@ import type {
   RegisterRequest,
   LoginRequest,
 } from '@beherit/grpc/protobufs/auth.pb';
-import { Body, Controller, Inject, Post, Put, Res, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Inject,
+  Post,
+  Put,
+  Res,
+  Req,
+  OnModuleInit,
+} from '@nestjs/common';
 import type { ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import type { Request, Response } from 'express';
 @Controller('auth')
-export class AuthController {
+export class AuthController implements OnModuleInit {
   private svc: AuthServiceClient;
+
   constructor(
     @Inject(AUTH_SERVICE_NAME)
     private readonly client: ClientGrpc,
-  ) {
+  ) {}
+
+  public onModuleInit(): void {
     this.svc = this.client.getService<AuthServiceClient>(AUTH_SERVICE_NAME);
   }
 

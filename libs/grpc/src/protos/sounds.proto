@@ -9,8 +9,8 @@ service SoundsService{
 //UploadSound
 
 message UploadSoundRequest{
-    string token = 1;
-    string buffer = 2;
+    bytes buffer = 1;
+    string userId = 2;
 }
 
 //Common massages

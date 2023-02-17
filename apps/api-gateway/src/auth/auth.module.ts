@@ -7,6 +7,7 @@ import {
   AUTH_PACKAGE_NAME,
   AUTH_SERVICE_NAME,
 } from '@beherit/grpc/protobufs/auth.pb';
+import { AuthGuard } from './guards/auth.guard.js';
 
 @Module({
   imports: [

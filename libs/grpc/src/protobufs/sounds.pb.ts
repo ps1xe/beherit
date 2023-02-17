@@ -5,8 +5,8 @@ import { Observable } from "rxjs";
 export const protobufPackage = "sounds";
 
 export interface UploadSoundRequest {
-  token: string;
-  buffer: string;
+  buffer: Uint8Array;
+  userId: string;
 }
 
 export interface Empty {
