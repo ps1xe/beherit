@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { S3SoundsController } from './controllers/upload-sounds.controller.js';
-import { SoundsUploadService } from './services/upload-sounds.service.js';
+import { SoundsController } from './controllers/sounds.controller.js';
+import { SoundsService } from './services/sounds.service.js';
 
 @Module({
-  controllers: [S3SoundsController],
-  providers: [SoundsUploadService],
+  controllers: [SoundsController],
+  providers: [SoundsService],
 })
 export class SoundsModule {}

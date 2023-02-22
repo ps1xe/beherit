@@ -1,5 +1,7 @@
-export class LoginResponseDto {
-  token: string;
+import { LoginResponse } from '@beherit/grpc/protobufs/auth.pb';
 
-  refreshToken: string;
+export class LoginResponseDto implements LoginResponse {
+  token!: string;
+
+  refreshToken!: string;
 }

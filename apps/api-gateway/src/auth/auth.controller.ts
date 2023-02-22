@@ -19,6 +19,7 @@ import {
 import type { ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import type { Request, Response } from 'express';
+
 @Controller('auth')
 export class AuthController implements OnModuleInit {
   private svc: AuthServiceClient;

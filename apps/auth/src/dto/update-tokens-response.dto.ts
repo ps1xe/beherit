@@ -1,5 +1,7 @@
-export class UpdateTokensResponseDto {
-  token: string;
+import { UpdateTokensResponse } from '@beherit/grpc/protobufs/auth.pb';
 
-  refreshToken: string;
+export class UpdateTokensResponseDto implements UpdateTokensResponse {
+  token!: string;
+
+  refreshToken!: string;
 }

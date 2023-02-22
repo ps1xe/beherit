@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
-import { GetSoundsController } from './controllers/get-sounds.controller.js';
-import { GetSoundsService } from './services/get-sounds.service.js';
+import { UsersController } from './controllers/users.controller.js';
+import { UsersService } from './services/users.service.js';
 
 @Module({
-  imports: [],
-  controllers: [GetSoundsController],
-  providers: [GetSoundsService],
+  controllers: [UsersController],
+  providers: [UsersService],
 })
 export class UserModule {}

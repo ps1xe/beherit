@@ -33,7 +33,8 @@ message GetListSoundsResponse{
 
 message ChangingAvatarRequest{
     string userId = 1;
-    string avatar = 2;
+    bytes avatar = 2;
+    string extension = 3;
 }
 
 

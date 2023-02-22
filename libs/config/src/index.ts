@@ -10,8 +10,11 @@ export const config = cleanEnv(process.env, {
   DATABASE_URL: str({
     default: 'postgres://postgres:pgsql@localhost:5432/gm-database',
   }),
-  S3_BUCKET_NAME: str({
-    default: 'beherit',
+  S3_BUCKET_NAME_SOUNDS: str({
+    default: 'beherit-bucket-s',
+  }),
+  S3_BUCKET_NAME_AVATAR: str({
+    default: 'beherit-bucket-a',
   }),
   S3_ACCESS_KEY_ID: str({
     default: 'KEY_ID',

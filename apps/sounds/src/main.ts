@@ -1,11 +1,9 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions } from '@nestjs/microservices';
-import { Transport } from '@nestjs/microservices';
+import { Transport } from '@nestjs/microservices/enums/transport.enum.js';
 import { SoundsModule } from './sounds.module.js';
 import { SOUNDS_PACKAGE_NAME } from '@beherit/grpc/protobufs/sounds.pb';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
 
 const microserviceOptions = {
   transport: Transport.GRPC,
@@ -14,11 +12,8 @@ const microserviceOptions = {
     channelOptions: {
       'grpc.max_receive_message_length': 1024 * 1024 * 1024 * 50,
     },
-    url: '0.0.0.0:50052',
-    protoPath: join(
-      dirname(fileURLToPath(import.meta.url)),
-      '../../../../libs/grpc/src/protos/sounds.proto',
-    ),
+    url: '0.0.0.0:50053',
+    protoPath: '../../libs/grpc/src/protos/sounds.proto',
   },
 } as MicroserviceOptions;
 

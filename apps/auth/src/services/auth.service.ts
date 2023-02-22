@@ -1,7 +1,4 @@
-import { Injectable } from '@nestjs/common';
-import { RegisterRequestDto } from '../dto/register-request.dto.js';
-import { LoginRequestDto } from '../dto/login-request.dto.js';
-import { ValidateRequestDto } from '../dto/validate-request.dto.js';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { User } from '@beherit/typeorm/entities/User';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -14,21 +11,25 @@ import { RegisterResponseDto } from '../dto/register-response.dto.js';
 import { randomUUID } from 'crypto';
 import { Repository } from 'typeorm';
 import { typeorm } from '../typeorm-connection.js';
-import { UpdateTokensRequestDto } from '../dto/update-tokens-request.dto.js';
 
 @Injectable()
-export class AuthService {
-  userRepository: Repository<User>;
+export class AuthService implements OnModuleInit {
+  private userRepository: Repository<User>;
 
-  constructor(private readonly jwtService: JwtService) {
+  constructor(
+    @Inject(JwtService)
+    private readonly jwtService: JwtService,
+  ) {}
+
+  onModuleInit(): void {
     this.userRepository = typeorm.getRepository(User);
   }
 
-  async register({
-    username,
-    email,
-    password,
-  }: RegisterRequestDto): Promise<RegisterResponseDto> {
+  async register(
+    username: string,
+    email: string,
+    password: string,
+  ): Promise<RegisterResponseDto> {
     const user = await this.userRepository.findOne({
       where: {
         email: email,
@@ -64,6 +65,7 @@ export class AuthService {
       email: email,
       username: username,
       password: encodePassword,
+      avatar: 'default_avatar.png',
       refreshToken: hashedRefreshToken,
     };
 
@@ -72,7 +74,7 @@ export class AuthService {
     return { token: token, refreshToken: refreshToken };
   }
 
-  async login({ email, password }: LoginRequestDto): Promise<LoginResponseDto> {
+  async login(email: string, password: string): Promise<LoginResponseDto> {
     const user = await this.userRepository.findOne({
       where: {
         email: email,
@@ -120,7 +122,7 @@ export class AuthService {
     };
   }
 
-  async validate({ token }: ValidateRequestDto): Promise<ValidateResponseDto> {
+  async validate(token: string): Promise<ValidateResponseDto> {
     const decoded = await this.jwtService.verify(token, {
       secret: config.JWT_SECRET_KEY,
     });
@@ -137,9 +139,7 @@ export class AuthService {
     return { userId: user.id };
   }
 
-  async updateTokens({
-    refreshToken,
-  }: UpdateTokensRequestDto): Promise<UpdateTokensResponseDto> {
+  async updateTokens(refreshToken: string): Promise<UpdateTokensResponseDto> {
     const decoded = await this.jwtService.verify(refreshToken, {
       secret: config.JWT_REFRESH_SECRET_KEY,
     });

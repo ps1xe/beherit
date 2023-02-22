@@ -22,7 +22,8 @@ export interface GetListSoundsResponse {
 
 export interface ChangingAvatarRequest {
   userId: string;
-  avatar: string;
+  avatar: Uint8Array;
+  extension: string;
 }
 
 export interface ChangePasswordRequest {

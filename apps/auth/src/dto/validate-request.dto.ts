@@ -3,5 +3,5 @@ import { IsString } from 'class-validator';
 
 export class ValidateRequestDto implements ValidateRequest {
   @IsString()
-  token: string;
+  token!: string;
 }

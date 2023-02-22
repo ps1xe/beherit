@@ -23,10 +23,16 @@ export class AuthController {
   ) {}
 
   @GrpcMethod(AUTH_SERVICE_NAME, 'Register')
-  async register(
-    registerRequest: RegisterRequestDto,
-  ): Promise<RegisterResponse> {
-    const registerResponse = await this.authService.register(registerRequest);
+  async register({
+    username,
+    email,
+    password,
+  }: RegisterRequestDto): Promise<RegisterResponse> {
+    const registerResponse = await this.authService.register(
+      username,
+      email,
+      password,
+    );
     return {
       token: registerResponse.token,
       refreshToken: registerResponse.refreshToken,
@@ -34,8 +40,8 @@ export class AuthController {
   }
 
   @GrpcMethod(AUTH_SERVICE_NAME, 'Login')
-  async login(loginRequest: LoginRequestDto): Promise<LoginResponse> {
-    const loginResponse = await this.authService.login(loginRequest);
+  async login({ email, password }: LoginRequestDto): Promise<LoginResponse> {
+    const loginResponse = await this.authService.login(email, password);
     return {
       token: loginResponse.token,
       refreshToken: loginResponse.refreshToken,
@@ -43,19 +49,17 @@ export class AuthController {
   }
 
   @GrpcMethod(AUTH_SERVICE_NAME, 'Validate')
-  async validate(
-    validateRequest: ValidateRequestDto,
-  ): Promise<ValidateResponse> {
-    const validateResponse = await this.authService.validate(validateRequest);
+  async validate({ token }: ValidateRequestDto): Promise<ValidateResponse> {
+    const validateResponse = await this.authService.validate(token);
     return { userId: validateResponse.userId };
   }
 
   @GrpcMethod(AUTH_SERVICE_NAME, 'UpdateTokens')
-  async updateTokens(
-    updateTokensRequest: UpdateTokensRequestDto,
-  ): Promise<UpdateTokensResponse> {
+  async updateTokens({
+    refreshToken,
+  }: UpdateTokensRequestDto): Promise<UpdateTokensResponse> {
     const updateTokensResponse = await this.authService.updateTokens(
-      updateTokensRequest,
+      refreshToken,
     );
     return {
       token: updateTokensResponse.token,
