@@ -13,10 +13,10 @@ import {
 } from '@nestjs/common';
 import type { ClientGrpc } from '@nestjs/microservices';
 import {
-  Empty,
   GetListSoundsResponse,
   UserServiceClient,
   USER_SERVICE_NAME,
+  Void,
 } from '@beherit/grpc/protobufs/user.pb';
 import type { Request } from 'express';
 import { AuthService } from '../auth/auth.service.js';
@@ -66,7 +66,7 @@ export class UsersController implements OnModuleInit {
   async changingAvatar(
     @UploadedFile() avatar: Express.Multer.File,
     @Req() request: Request,
-  ): Promise<Empty> {
+  ): Promise<Void> {
     const token = request.cookies.token;
     const { userId } = await this.authService.validate(token);
     const buffer = avatar.buffer;
@@ -82,7 +82,7 @@ export class UsersController implements OnModuleInit {
   async changePassword(
     @Body() body: ChangePasswordDto,
     @Req() request: Request,
-  ): Promise<Empty> {
+  ): Promise<Void> {
     const token = request.cookies.token;
     const { userId } = await this.authService.validate(token);
     return this.svc.changePassword({

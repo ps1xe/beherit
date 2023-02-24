@@ -3,7 +3,7 @@ syntax = "proto3";
 package sounds;
 
 service SoundsService{
-    rpc UploadSound (UploadSoundRequest) returns (Empty) {}
+    rpc UploadSound (UploadSoundRequest) returns (Void) {}
 }
 
 //UploadSound
@@ -15,4 +15,4 @@ message UploadSoundRequest{
 
 //Common massages
 
-message Empty{}
+message Void{}

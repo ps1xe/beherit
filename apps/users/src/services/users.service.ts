@@ -11,7 +11,7 @@ import { v4 as uuid } from 'uuid';
 import * as bcrypt from 'bcrypt';
 import { RpcException } from '@nestjs/microservices';
 import { GetListSoundsResponseDto } from '../dto/get-list-sounds-response.dto.js';
-import { Empty } from '@beherit/grpc/protobufs/user.pb';
+import { Void } from '@beherit/grpc/protobufs/user.pb';
 
 @Injectable()
 export class UsersService implements OnModuleInit {
@@ -72,7 +72,7 @@ export class UsersService implements OnModuleInit {
     userId: string,
     avatar: Buffer,
     extension: string,
-  ): Promise<Empty> {
+  ): Promise<Void> {
     const uploadResult = await s3
       .upload({
         Bucket: config.S3_BUCKET_NAME_AVATAR,
@@ -98,7 +98,7 @@ export class UsersService implements OnModuleInit {
     userId: string,
     currentPassword: string,
     newPassword: string,
-  ): Promise<Empty> {
+  ): Promise<Void> {
     const user = await this.userRepository.findOne({
       where: {
         id: userId,

@@ -11,6 +11,7 @@ import {
 import {
   SoundsServiceClient,
   SOUNDS_SERVICE_NAME,
+  Void,
 } from '@beherit/grpc/protobufs/sounds.pb';
 import type { ClientGrpc } from '@nestjs/microservices';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -39,10 +40,10 @@ export class SoundsController implements OnModuleInit {
   async uploadSound(
     @UploadedFile() file: Express.Multer.File,
     @Req() request: Request,
-  ): Promise<void> {
+  ): Promise<Void> {
     const token = request.cookies.token;
     const { userId } = await this.authService.validate(token);
-    this.svc.uploadSound({
+    return this.svc.uploadSound({
       buffer: file.buffer,
       userId: userId,
     });

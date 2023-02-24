@@ -5,8 +5,8 @@ package user;
 service UserService{
     rpc GetUrlToDownloadSound (GetUrlSoundRequest) returns (GetUrlSoundResponse) {}
     rpc GetListSounds (GetListSoundsRequest) returns (GetListSoundsResponse) {}
-    rpc ChangingAvatar (ChangingAvatarRequest) returns (Empty) {}
-    rpc ChangePassword (ChangePasswordRequest) returns (Empty) {}
+    rpc ChangingAvatar (ChangingAvatarRequest) returns (Void) {}
+    rpc ChangePassword (ChangePasswordRequest) returns (Void) {}
 }
 
 //GetUrlToDownloadSound
@@ -48,4 +48,4 @@ message ChangePasswordRequest{
 
 //Common massages
 
-message Empty{}
+message Void{}

@@ -32,7 +32,7 @@ export interface ChangePasswordRequest {
   newPassword: string;
 }
 
-export interface Empty {
+export interface Void {
 }
 
 export const USER_PACKAGE_NAME = "user";
@@ -42,9 +42,9 @@ export interface UserServiceClient {
 
   getListSounds(request: GetListSoundsRequest): Observable<GetListSoundsResponse>;
 
-  changingAvatar(request: ChangingAvatarRequest): Observable<Empty>;
+  changingAvatar(request: ChangingAvatarRequest): Observable<Void>;
 
-  changePassword(request: ChangePasswordRequest): Observable<Empty>;
+  changePassword(request: ChangePasswordRequest): Observable<Void>;
 }
 
 export interface UserServiceController {
@@ -56,9 +56,9 @@ export interface UserServiceController {
     request: GetListSoundsRequest,
   ): Promise<GetListSoundsResponse> | Observable<GetListSoundsResponse> | GetListSoundsResponse;
 
-  changingAvatar(request: ChangingAvatarRequest): Promise<Empty> | Observable<Empty> | Empty;
+  changingAvatar(request: ChangingAvatarRequest): Promise<Void> | Observable<Void> | Void;
 
-  changePassword(request: ChangePasswordRequest): Promise<Empty> | Observable<Empty> | Empty;
+  changePassword(request: ChangePasswordRequest): Promise<Void> | Observable<Void> | Void;
 }
 
 export function UserServiceControllerMethods() {

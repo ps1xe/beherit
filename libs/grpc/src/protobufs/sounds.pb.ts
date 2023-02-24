@@ -9,17 +9,17 @@ export interface UploadSoundRequest {
   userId: string;
 }
 
-export interface Empty {
+export interface Void {
 }
 
 export const SOUNDS_PACKAGE_NAME = "sounds";
 
 export interface SoundsServiceClient {
-  uploadSound(request: UploadSoundRequest): Observable<Empty>;
+  uploadSound(request: UploadSoundRequest): Observable<Void>;
 }
 
 export interface SoundsServiceController {
-  uploadSound(request: UploadSoundRequest): Promise<Empty> | Observable<Empty> | Empty;
+  uploadSound(request: UploadSoundRequest): Promise<Void> | Observable<Void> | Void;
 }
 
 export function SoundsServiceControllerMethods() {

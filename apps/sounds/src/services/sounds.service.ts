@@ -5,6 +5,8 @@ import { Sound } from '@beherit/typeorm/entities/Sound';
 import { config } from '@beherit/config';
 import { s3 } from '../s3-connection.js';
 import { Repository } from 'typeorm';
+import { Void } from '@beherit/grpc/protobufs/sounds.pb';
+import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class SoundsService implements OnModuleInit {
@@ -14,7 +16,7 @@ export class SoundsService implements OnModuleInit {
     this.soundRepository = typeorm.getRepository(Sound);
   }
 
-  async uploadSound(buffer: Buffer, userId: string): Promise<void> {
+  async uploadSound(buffer: Buffer, userId: string): Promise<Void> {
     const uploadResult = await s3
       .upload({
         Bucket: config.S3_BUCKET_NAME_SOUNDS,
@@ -28,6 +30,11 @@ export class SoundsService implements OnModuleInit {
       userId: userId,
     };
 
-    this.soundRepository.save(soundStorageInDB);
+    try {
+      this.soundRepository.save(soundStorageInDB);
+    } catch (exception) {
+      throw new RpcException('Failed to added sound to DB');
+    }
+    return {};
   }
 }

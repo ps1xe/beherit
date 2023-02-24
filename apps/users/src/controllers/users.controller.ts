@@ -1,4 +1,4 @@
-import { Empty, USER_SERVICE_NAME } from '@beherit/grpc/protobufs/user.pb';
+import { USER_SERVICE_NAME, Void } from '@beherit/grpc/protobufs/user.pb';
 import { Controller } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { ChangePasswordRequestDto } from '../dto/change-password-request.dto.js';
@@ -32,7 +32,7 @@ export class UsersController {
     userId,
     avatar,
     extension,
-  }: ChangingAvatarRequestDto): Promise<Empty> {
+  }: ChangingAvatarRequestDto): Promise<Void> {
     return this.userService.changingAvatar(userId, avatar, extension);
   }
 
@@ -41,7 +41,7 @@ export class UsersController {
     userId,
     currentPassword,
     newPassword,
-  }: ChangePasswordRequestDto): Promise<Empty> {
+  }: ChangePasswordRequestDto): Promise<Void> {
     return this.userService.changePassword(
       userId,
       currentPassword,
