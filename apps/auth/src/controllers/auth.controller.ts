@@ -4,9 +4,11 @@ import {
   RegisterResponse,
   UpdateTokensResponse,
   ValidateResponse,
+  Void,
 } from '@beherit/grpc/protobufs/auth.pb';
 import { Controller, Inject, UseFilters } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
+import { GetLinkToResetPasswordRequestDto } from '../dto/get-link-to-reset-password-request.dto.js';
 import { LoginRequestDto } from '../dto/login-request.dto.js';
 import { RegisterRequestDto } from '../dto/register-request.dto.js';
 import { UpdateTokensRequestDto } from '../dto/update-tokens-request.dto.js';
@@ -65,5 +67,12 @@ export class AuthController {
       token: updateTokensResponse.token,
       refreshToken: updateTokensResponse.refreshToken,
     };
+  }
+
+  @GrpcMethod(AUTH_SERVICE_NAME, 'GetLinkToResetPassword')
+  async getLinkToResetPassword({
+    email,
+  }: GetLinkToResetPasswordRequestDto): Promise<Void> {
+    return this.authService.getLinkToResetPassword(email);
   }
 }

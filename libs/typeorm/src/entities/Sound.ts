@@ -10,7 +10,7 @@ export class Sound extends BaseEntity {
   @Column({ name: 'key' })
   key!: string;
 
-  @Column({ name: 'userId' })
+  @Column({ name: 'user_id' })
   userId!: string;
   // userId!: User['id'];
 

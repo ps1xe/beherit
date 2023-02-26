@@ -1,4 +1,10 @@
-import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  OnModuleInit,
+} from '@nestjs/common';
 import { User } from '@beherit/typeorm/entities/User';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -11,6 +17,10 @@ import { RegisterResponseDto } from '../dto/register-response.dto.js';
 import { randomUUID } from 'crypto';
 import { Repository } from 'typeorm';
 import { typeorm } from '../typeorm-connection.js';
+import { MailerService } from '@nestjs-modules/mailer/dist/mailer.service.js';
+import { dirname, join } from 'path';
+import { Void } from '@beherit/grpc/protobufs/auth.pb';
+import { fileURLToPath } from 'url';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
@@ -19,6 +29,8 @@ export class AuthService implements OnModuleInit {
   constructor(
     @Inject(JwtService)
     private readonly jwtService: JwtService,
+    @Inject(MailerService)
+    private readonly mailerService: MailerService,
   ) {}
 
   onModuleInit(): void {
@@ -67,6 +79,7 @@ export class AuthService implements OnModuleInit {
       password: encodePassword,
       avatar: 'default_avatar.png',
       refreshToken: hashedRefreshToken,
+      recoveryToken: 'null',
     };
 
     this.userRepository.save(newUser);
@@ -110,10 +123,7 @@ export class AuthService implements OnModuleInit {
     const hashedRefreshToken = await bcrypt.hashSync(refreshToken, salt);
 
     this.userRepository.save({
-      id: user.id,
-      email: user.email,
-      username: user.username,
-      password: user.password,
+      ...user,
       refreshToken: hashedRefreshToken,
     });
     return {
@@ -187,5 +197,55 @@ export class AuthService implements OnModuleInit {
     });
 
     return { token: updatedToken, refreshToken: updatedRefreshToken };
+  }
+
+  async getLinkToResetPassword(email: string): Promise<Void> {
+    const user = await this.userRepository.findOne({
+      where: {
+        email: email,
+      },
+    });
+
+    if (!user) {
+      throw new RpcException('Email not found');
+    }
+
+    const tokenRecovery = await this.jwtService.signAsync(
+      {
+        id: randomUUID(),
+        email: email,
+      },
+      { secret: config.JWT_RECOVERY_SECRET_KEY, expiresIn: '5m' },
+    );
+
+    const salt = await bcrypt.genSalt(5);
+    const hashedRecoveryToken = await bcrypt.hashSync(tokenRecovery, salt);
+
+    this.userRepository.save({
+      ...user,
+      recoveryToken: hashedRecoveryToken,
+    });
+
+    const url = `http://localhost:4000/auth/resetPassword/${tokenRecovery}`;
+
+    this.mailerService
+      .sendMail({
+        to: email,
+        subject: 'Восстановление пароля',
+        // template: process.cwd() + '\\src\\mail-templates' + 'passwordRecovery',
+        // context: {
+        //   username: user.username,
+        //   url: tokenRecovery,
+        // },
+        html: `<div> Доброго дня, ${user.username}.</div> <div>Для восстановления пароля пройдите пожалуйста по <a href = "${url}">ссылке</a></div>`,
+      })
+      .catch((exception) => {
+        throw new HttpException(
+          `Ошибка работы почты: ${JSON.stringify(exception)}`,
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      });
+
+    return {};
   }
 }

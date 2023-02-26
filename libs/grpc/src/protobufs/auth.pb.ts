@@ -42,6 +42,13 @@ export interface UpdateTokensResponse {
   token: string;
 }
 
+export interface GetLinkToResetPasswordRequest {
+  email: string;
+}
+
+export interface Void {
+}
+
 export const AUTH_PACKAGE_NAME = "auth";
 
 export interface AuthServiceClient {
@@ -52,6 +59,8 @@ export interface AuthServiceClient {
   validate(request: ValidateRequest): Observable<ValidateResponse>;
 
   updateTokens(request: UpdateTokensRequest): Observable<UpdateTokensResponse>;
+
+  getLinkToResetPassword(request: GetLinkToResetPasswordRequest): Observable<Void>;
 }
 
 export interface AuthServiceController {
@@ -64,11 +73,13 @@ export interface AuthServiceController {
   updateTokens(
     request: UpdateTokensRequest,
   ): Promise<UpdateTokensResponse> | Observable<UpdateTokensResponse> | UpdateTokensResponse;
+
+  getLinkToResetPassword(request: GetLinkToResetPasswordRequest): Promise<Void> | Observable<Void> | Void;
 }
 
 export function AuthServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["register", "login", "validate", "updateTokens"];
+    const grpcMethods: string[] = ["register", "login", "validate", "updateTokens", "getLinkToResetPassword"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("AuthService", method)(constructor.prototype[method], method, descriptor);

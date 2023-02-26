@@ -37,7 +37,13 @@ export const config = cleanEnv(process.env, {
   JWT_REFRESH_SECRET_KEY: str({
     default: 'refre$h_$ecret',
   }),
+  JWT_RECOVERY_SECRET_KEY: str({
+    default: 'recovery_$ecret',
+  }),
   SECRET_COOKIES_KEY: str({
     default: '$ecret_cookies_key',
+  }),
+  MAILER_TRANSPORT: str({
+    default: 'smtps://user@domain.com:pass@smtp.domain.com',
   }),
 });

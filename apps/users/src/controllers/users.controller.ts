@@ -1,5 +1,5 @@
 import { USER_SERVICE_NAME, Void } from '@beherit/grpc/protobufs/user.pb';
-import { Controller } from '@nestjs/common';
+import { Controller, UseFilters } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { ChangePasswordRequestDto } from '../dto/change-password-request.dto.js';
 import { ChangingAvatarRequestDto } from '../dto/changing-avatar-request.dto.js';
@@ -7,8 +7,10 @@ import { GetListSoundsRequsetDto } from '../dto/get-list-sounds-request.dto.js';
 import { GetListSoundsResponseDto } from '../dto/get-list-sounds-response.dto.js';
 import { GetUrlToDownloadRequestDto } from '../dto/get-url-request.dto.js';
 import { GetUrlToDownloadResponseDto } from '../dto/get-url-response.dto.js';
+import { RpcExceptionFilter } from '../filters/rpc-exception.filter.js';
 import { UsersService } from '../services/users.service.js';
 
+@UseFilters(new RpcExceptionFilter())
 @Controller()
 export class UsersController {
   constructor(private readonly userService: UsersService) {}

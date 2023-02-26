@@ -4,7 +4,10 @@ import { GrpcMethod } from '@nestjs/microservices';
 import { UploadSoundDto } from '../dto/upload-sound.dto.js';
 import { Inject } from '@nestjs/common';
 import { SoundsService } from '../services/sounds.service.js';
+import { UseFilters } from '@nestjs/common/decorators/core/exception-filters.decorator.js';
+import { RpcExceptionFilter } from '../filters/rpc-exception.filter.js';
 
+@UseFilters(new RpcExceptionFilter())
 @Controller()
 export class SoundsController {
   constructor(

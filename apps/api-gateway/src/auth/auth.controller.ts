@@ -1,8 +1,10 @@
 import {
   AuthServiceClient,
   AUTH_SERVICE_NAME,
+  Void,
 } from '@beherit/grpc/protobufs/auth.pb';
 import type {
+  GetLinkToResetPasswordRequest,
   RegisterRequest,
   LoginRequest,
 } from '@beherit/grpc/protobufs/auth.pb';
@@ -63,5 +65,12 @@ export class AuthController implements OnModuleInit {
     );
     response.cookie('refreshToken', tokens.refreshToken);
     response.cookie('token', tokens.token);
+  }
+
+  @Post('getLinkToResetPassword')
+  async getLinkToResetPassword(
+    @Body() getLinkToResetPasswordBody: GetLinkToResetPasswordRequest,
+  ): Promise<Void> {
+    return this.svc.getLinkToResetPassword(getLinkToResetPasswordBody);
   }
 }
