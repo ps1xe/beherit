@@ -23,6 +23,7 @@ export class UsersService implements OnModuleInit {
     this.userRepository = typeorm.getRepository(User);
   }
 
+  //----------------------------------------------------------------
   async getUrlToDownloadSound(
     soundId: string,
   ): Promise<GetUrlToDownloadResponseDto> {
@@ -47,6 +48,7 @@ export class UsersService implements OnModuleInit {
     return { url };
   }
 
+  //----------------------------------------------------------------
   async getListSounds(userId: string): Promise<GetListSoundsResponseDto> {
     const sounds = await this.soundRepository.find({
       where: {
@@ -68,6 +70,7 @@ export class UsersService implements OnModuleInit {
     return { sounds: urls };
   }
 
+  //----------------------------------------------------------------
   async changingAvatar(
     userId: string,
     avatar: Buffer,
@@ -94,6 +97,7 @@ export class UsersService implements OnModuleInit {
     return {};
   }
 
+  //----------------------------------------------------------------
   async changePassword(
     userId: string,
     currentPassword: string,

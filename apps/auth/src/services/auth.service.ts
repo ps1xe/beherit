@@ -18,9 +18,7 @@ import { randomUUID } from 'crypto';
 import { Repository } from 'typeorm';
 import { typeorm } from '../typeorm-connection.js';
 import { MailerService } from '@nestjs-modules/mailer/dist/mailer.service.js';
-import { dirname, join } from 'path';
 import { Void } from '@beherit/grpc/protobufs/auth.pb';
-import { fileURLToPath } from 'url';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
@@ -37,6 +35,7 @@ export class AuthService implements OnModuleInit {
     this.userRepository = typeorm.getRepository(User);
   }
 
+  //----------------------------------------------------------------
   async register(
     username: string,
     email: string,
@@ -82,11 +81,16 @@ export class AuthService implements OnModuleInit {
       recoveryToken: 'null',
     };
 
-    this.userRepository.save(newUser);
+    try {
+      this.userRepository.save(newUser);
+    } catch (exception) {
+      throw new RpcException('DB write error');
+    }
 
     return { token: token, refreshToken: refreshToken };
   }
 
+  //----------------------------------------------------------------
   async login(email: string, password: string): Promise<LoginResponseDto> {
     const user = await this.userRepository.findOne({
       where: {
@@ -122,16 +126,22 @@ export class AuthService implements OnModuleInit {
     const salt = await bcrypt.genSalt(5);
     const hashedRefreshToken = await bcrypt.hashSync(refreshToken, salt);
 
-    this.userRepository.save({
-      ...user,
-      refreshToken: hashedRefreshToken,
-    });
+    try {
+      this.userRepository.save({
+        ...user,
+        refreshToken: hashedRefreshToken,
+      });
+    } catch (exception) {
+      throw new RpcException('DB write error');
+    }
+
     return {
       token: token,
       refreshToken: refreshToken,
     };
   }
 
+  //----------------------------------------------------------------
   async validate(token: string): Promise<ValidateResponseDto> {
     const decoded = await this.jwtService.verify(token, {
       secret: config.JWT_SECRET_KEY,
@@ -149,10 +159,12 @@ export class AuthService implements OnModuleInit {
     return { userId: user.id };
   }
 
+  //----------------------------------------------------------------------------------
   async updateTokens(refreshToken: string): Promise<UpdateTokensResponseDto> {
     const decoded = await this.jwtService.verify(refreshToken, {
       secret: config.JWT_REFRESH_SECRET_KEY,
     });
+
     const user = await this.userRepository.findOne({
       where: { email: decoded.email },
     });
@@ -191,14 +203,19 @@ export class AuthService implements OnModuleInit {
       salt,
     );
 
-    this.userRepository.save({
-      ...user,
-      refreshToken: hashedUpdatedRefreshToken,
-    });
+    try {
+      this.userRepository.save({
+        ...user,
+        refreshToken: hashedUpdatedRefreshToken,
+      });
+    } catch (exception) {
+      throw new RpcException('DB write error');
+    }
 
     return { token: updatedToken, refreshToken: updatedRefreshToken };
   }
 
+  //----------------------------------------------------------------
   async getLinkToResetPassword(email: string): Promise<Void> {
     const user = await this.userRepository.findOne({
       where: {
@@ -221,10 +238,14 @@ export class AuthService implements OnModuleInit {
     const salt = await bcrypt.genSalt(5);
     const hashedRecoveryToken = await bcrypt.hashSync(tokenRecovery, salt);
 
-    this.userRepository.save({
-      ...user,
-      recoveryToken: hashedRecoveryToken,
-    });
+    try {
+      this.userRepository.save({
+        ...user,
+        recoveryToken: hashedRecoveryToken,
+      });
+    } catch (exception) {
+      throw new RpcException('DB write error');
+    }
 
     const url = `http://localhost:4000/auth/resetPassword/${tokenRecovery}`;
 
@@ -235,7 +256,7 @@ export class AuthService implements OnModuleInit {
         // template: process.cwd() + '\\src\\mail-templates' + 'passwordRecovery',
         // context: {
         //   username: user.username,
-        //   url: tokenRecovery,
+        //   url: url,
         // },
         html: `<div> Доброго дня, ${user.username}.</div> <div>Для восстановления пароля пройдите пожалуйста по <a href = "${url}">ссылке</a></div>`,
       })
@@ -245,6 +266,44 @@ export class AuthService implements OnModuleInit {
           HttpStatus.UNPROCESSABLE_ENTITY,
         );
       });
+
+    return {};
+  }
+
+  //----------------------------------------------------------------
+  async resetPassword(token: string, newPassword: string): Promise<Void> {
+    const decoded = this.jwtService.verify(token, {
+      secret: config.JWT_RECOVERY_SECRET_KEY,
+    });
+
+    const user = await this.userRepository.findOne({
+      where: {
+        email: decoded.email,
+      },
+    });
+
+    if (!user) {
+      throw new RpcException('User not found');
+    }
+
+    const coincidenceTokens = bcrypt.compareSync(token, user.recoveryToken);
+
+    if (!coincidenceTokens) {
+      throw new RpcException('Recovery token invalid');
+    }
+
+    const salt = await bcrypt.genSalt(5);
+    const hashedPassword = await bcrypt.hashSync(newPassword, salt);
+
+    try {
+      this.userRepository.save({
+        ...user,
+        password: hashedPassword,
+        recoveryToken: 'null',
+      });
+    } catch (exception) {
+      throw new RpcException('DB write error');
+    }
 
     return {};
   }

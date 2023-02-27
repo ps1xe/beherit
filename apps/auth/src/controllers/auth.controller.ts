@@ -11,6 +11,7 @@ import { GrpcMethod } from '@nestjs/microservices';
 import { GetLinkToResetPasswordRequestDto } from '../dto/get-link-to-reset-password-request.dto.js';
 import { LoginRequestDto } from '../dto/login-request.dto.js';
 import { RegisterRequestDto } from '../dto/register-request.dto.js';
+import { ResetPasswordDto } from '../dto/reset-password.dto.js';
 import { UpdateTokensRequestDto } from '../dto/update-tokens-request.dto.js';
 import { ValidateRequestDto } from '../dto/validate-request.dto.js';
 import { RpcExceptionFilter } from '../filters/rpc-exception.filter.js';
@@ -74,5 +75,10 @@ export class AuthController {
     email,
   }: GetLinkToResetPasswordRequestDto): Promise<Void> {
     return this.authService.getLinkToResetPassword(email);
+  }
+
+  @GrpcMethod(AUTH_SERVICE_NAME, 'ResetPassword')
+  async resetPassword({ token, newPassword }: ResetPasswordDto): Promise<Void> {
+    return this.authService.resetPassword(token, newPassword);
   }
 }

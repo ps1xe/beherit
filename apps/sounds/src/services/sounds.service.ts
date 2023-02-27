@@ -16,6 +16,7 @@ export class SoundsService implements OnModuleInit {
     this.soundRepository = typeorm.getRepository(Sound);
   }
 
+  //----------------------------------------------------------------
   async uploadSound(buffer: Buffer, userId: string): Promise<Void> {
     const uploadResult = await s3
       .upload({

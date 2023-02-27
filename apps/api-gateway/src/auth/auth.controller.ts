@@ -17,6 +17,7 @@ import {
   Res,
   Req,
   OnModuleInit,
+  Param,
 } from '@nestjs/common';
 import type { ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
@@ -72,5 +73,16 @@ export class AuthController implements OnModuleInit {
     @Body() getLinkToResetPasswordBody: GetLinkToResetPasswordRequest,
   ): Promise<Void> {
     return this.svc.getLinkToResetPassword(getLinkToResetPasswordBody);
+  }
+
+  @Post('resetPassword/:token')
+  async resetPassword(
+    @Body() resetPasswordBody,
+    @Param('token') token: string,
+  ): Promise<Void> {
+    return this.svc.resetPassword({
+      token: token,
+      newPassword: resetPasswordBody.newPassword,
+    });
   }
 }

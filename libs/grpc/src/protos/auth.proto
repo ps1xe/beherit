@@ -8,6 +8,7 @@ service AuthService {
   rpc Validate (ValidateRequest) returns (ValidateResponse) {}
   rpc UpdateTokens (UpdateTokensRequest) returns (UpdateTokensResponse) {}
   rpc GetLinkToResetPassword (GetLinkToResetPasswordRequest) returns (Void) {}
+  rpc ResetPassword (ResetPasswordRequest) returns (Void) {}
 }
 
 // Register
@@ -60,6 +61,14 @@ message UpdateTokensResponse{
 
 message GetLinkToResetPasswordRequest{
   string email = 1;
+}
+
+
+//ResetPassword
+message ResetPasswordRequest{
+  string token = 1;
+  string newPassword = 2;
+
 }
 
 //CommonMassage

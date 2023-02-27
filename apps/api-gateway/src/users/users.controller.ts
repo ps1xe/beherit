@@ -21,7 +21,6 @@ import {
 import type { Request } from 'express';
 import { AuthService } from '../auth/auth.service.js';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ChangePasswordDto } from './dto/change-password.dto.js';
 import { AuthGuard } from '../auth/guards/auth.guard.js';
 import { lastValueFrom } from 'rxjs';
 
@@ -80,15 +79,15 @@ export class UsersController implements OnModuleInit {
 
   @Post('changePassword')
   async changePassword(
-    @Body() body: ChangePasswordDto,
+    @Body() changePasswordBody,
     @Req() request: Request,
   ): Promise<Void> {
     const token = request.cookies.token;
     const { userId } = await this.authService.validate(token);
     return this.svc.changePassword({
       userId: userId,
-      currentPassword: body.currentPassword,
-      newPassword: body.newPassword,
+      currentPassword: changePasswordBody.currentPassword,
+      newPassword: changePasswordBody.newPassword,
     });
   }
 }
