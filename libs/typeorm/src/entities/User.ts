@@ -1,4 +1,10 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  Relation,
+} from 'typeorm';
 import { BaseEntity } from '../common/entities/base.entity.js';
 import { Sound } from './Sound.js';
 
@@ -25,6 +31,6 @@ export class User extends BaseEntity {
   @Column({ name: 'recovery_token' })
   recoveryToken!: string;
 
-  // @OneToMany(() => Sound, (sounds) => sounds.user)
-  // sounds!: Sound[];
+  @OneToMany(() => Sound, (sounds) => sounds.user)
+  sounds!: Relation<Sound>[];
 }

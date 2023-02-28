@@ -1,38 +1,36 @@
-import {
-  HttpException,
-  HttpStatus,
-  Inject,
-  Injectable,
-  OnModuleInit,
-} from '@nestjs/common';
-import { User } from '@beherit/typeorm/entities/User';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { config } from '@beherit/config';
-import { RpcException } from '@nestjs/microservices';
+import { ClientGrpc, RpcException } from '@nestjs/microservices';
 import { ValidateResponseDto } from '../dto/validate-response.dto.js';
 import { UpdateTokensResponseDto } from '../dto/update-tokens-response.dto.js';
 import { LoginResponseDto } from '../dto/login-response.dto.js';
 import { RegisterResponseDto } from '../dto/register-response.dto.js';
 import { randomUUID } from 'crypto';
-import { Repository } from 'typeorm';
-import { typeorm } from '../typeorm-connection.js';
 import { MailerService } from '@nestjs-modules/mailer/dist/mailer.service.js';
 import { Void } from '@beherit/grpc/protobufs/auth.pb';
+import {
+  UserServiceClient,
+  USER_SERVICE_NAME,
+} from '@beherit/grpc/protobufs/user.pb';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
-  private userRepository: Repository<User>;
+  private svc: UserServiceClient;
 
   constructor(
     @Inject(JwtService)
     private readonly jwtService: JwtService,
     @Inject(MailerService)
     private readonly mailerService: MailerService,
+    @Inject(USER_SERVICE_NAME)
+    private readonly userClient: ClientGrpc,
   ) {}
 
   onModuleInit(): void {
-    this.userRepository = typeorm.getRepository(User);
+    this.svc = this.userClient.getService<UserServiceClient>(USER_SERVICE_NAME);
   }
 
   //----------------------------------------------------------------
@@ -41,11 +39,7 @@ export class AuthService implements OnModuleInit {
     email: string,
     password: string,
   ): Promise<RegisterResponseDto> {
-    const user = await this.userRepository.findOne({
-      where: {
-        email: email,
-      },
-    });
+    const user = await lastValueFrom(this.svc.findOne({ email: email }));
 
     if (user) {
       throw new RpcException('Email already exists');
@@ -81,22 +75,14 @@ export class AuthService implements OnModuleInit {
       recoveryToken: 'null',
     };
 
-    try {
-      this.userRepository.save(newUser);
-    } catch (exception) {
-      throw new RpcException('DB write error');
-    }
+    this.svc.save(newUser);
 
     return { token: token, refreshToken: refreshToken };
   }
 
   //----------------------------------------------------------------
   async login(email: string, password: string): Promise<LoginResponseDto> {
-    const user = await this.userRepository.findOne({
-      where: {
-        email: email,
-      },
-    });
+    const user = await lastValueFrom(this.svc.findOne({ email }));
 
     if (!user) {
       throw new RpcException('Email not found');
@@ -126,14 +112,10 @@ export class AuthService implements OnModuleInit {
     const salt = await bcrypt.genSalt(5);
     const hashedRefreshToken = await bcrypt.hashSync(refreshToken, salt);
 
-    try {
-      this.userRepository.save({
-        ...user,
-        refreshToken: hashedRefreshToken,
-      });
-    } catch (exception) {
-      throw new RpcException('DB write error');
-    }
+    this.svc.save({
+      ...user,
+      refreshToken: hashedRefreshToken,
+    });
 
     return {
       token: token,
@@ -150,12 +132,14 @@ export class AuthService implements OnModuleInit {
       throw new RpcException('Token is invalid');
     }
 
-    const user = await this.userRepository.findOne({
-      where: { email: decoded.email },
-    });
+    const user = await lastValueFrom(
+      this.svc.findOne({ email: decoded.email }),
+    );
+
     if (!user) {
       throw new RpcException('User not found');
     }
+
     return { userId: user.id };
   }
 
@@ -165,9 +149,9 @@ export class AuthService implements OnModuleInit {
       secret: config.JWT_REFRESH_SECRET_KEY,
     });
 
-    const user = await this.userRepository.findOne({
-      where: { email: decoded.email },
-    });
+    const user = await lastValueFrom(
+      this.svc.findOne({ email: decoded.email }),
+    );
     if (!user) {
       throw new RpcException('User not found');
     }
@@ -203,25 +187,17 @@ export class AuthService implements OnModuleInit {
       salt,
     );
 
-    try {
-      this.userRepository.save({
-        ...user,
-        refreshToken: hashedUpdatedRefreshToken,
-      });
-    } catch (exception) {
-      throw new RpcException('DB write error');
-    }
+    this.svc.save({
+      ...user,
+      refreshToken: hashedUpdatedRefreshToken,
+    });
 
     return { token: updatedToken, refreshToken: updatedRefreshToken };
   }
 
   //----------------------------------------------------------------
   async getLinkToResetPassword(email: string): Promise<Void> {
-    const user = await this.userRepository.findOne({
-      where: {
-        email: email,
-      },
-    });
+    const user = await lastValueFrom(this.svc.findOne({ email }));
 
     if (!user) {
       throw new RpcException('Email not found');
@@ -238,14 +214,10 @@ export class AuthService implements OnModuleInit {
     const salt = await bcrypt.genSalt(5);
     const hashedRecoveryToken = await bcrypt.hashSync(tokenRecovery, salt);
 
-    try {
-      this.userRepository.save({
-        ...user,
-        recoveryToken: hashedRecoveryToken,
-      });
-    } catch (exception) {
-      throw new RpcException('DB write error');
-    }
+    this.svc.save({
+      ...user,
+      recoveryToken: hashedRecoveryToken,
+    });
 
     const url = `http://localhost:4000/auth/resetPassword/${tokenRecovery}`;
 
@@ -261,9 +233,8 @@ export class AuthService implements OnModuleInit {
         html: `<div> Доброго дня, ${user.username}.</div> <div>Для восстановления пароля пройдите пожалуйста по <a href = "${url}">ссылке</a></div>`,
       })
       .catch((exception) => {
-        throw new HttpException(
+        throw new RpcException(
           `Ошибка работы почты: ${JSON.stringify(exception)}`,
-          HttpStatus.UNPROCESSABLE_ENTITY,
         );
       });
 
@@ -276,11 +247,9 @@ export class AuthService implements OnModuleInit {
       secret: config.JWT_RECOVERY_SECRET_KEY,
     });
 
-    const user = await this.userRepository.findOne({
-      where: {
-        email: decoded.email,
-      },
-    });
+    const user = await lastValueFrom(
+      this.svc.findOne({ email: decoded.email }),
+    );
 
     if (!user) {
       throw new RpcException('User not found');
@@ -295,15 +264,11 @@ export class AuthService implements OnModuleInit {
     const salt = await bcrypt.genSalt(5);
     const hashedPassword = await bcrypt.hashSync(newPassword, salt);
 
-    try {
-      this.userRepository.save({
-        ...user,
-        password: hashedPassword,
-        recoveryToken: 'null',
-      });
-    } catch (exception) {
-      throw new RpcException('DB write error');
-    }
+    this.svc.save({
+      ...user,
+      password: hashedPassword,
+      recoveryToken: 'null',
+    });
 
     return {};
   }

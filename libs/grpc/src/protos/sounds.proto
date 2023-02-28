@@ -4,6 +4,8 @@ package sounds;
 
 service SoundsService{
     rpc UploadSound (UploadSoundRequest) returns (Void) {}
+    rpc FindOne (FindOneRequest) returns (Sound) {}
+    rpc Find (FindRequest) returns (FindResponse) {}
 }
 
 //UploadSound
@@ -13,6 +15,30 @@ message UploadSoundRequest{
     string userId = 2;
 }
 
+//FindOne
+
+message FindOneRequest{
+    string soundId = 1;
+}
+
+//Find
+
+message FindRequest{
+    string userId = 1;
+}
+
+message FindResponse{
+    repeated Sound sounds = 1;
+}
+
 //Common massages
 
 message Void{}
+
+//Entity
+
+message Sound{
+    string id = 1;
+    string key = 2;
+    string userId = 3;
+}

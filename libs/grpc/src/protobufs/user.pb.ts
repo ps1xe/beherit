@@ -32,7 +32,32 @@ export interface ChangePasswordRequest {
   newPassword: string;
 }
 
+/** FindOne */
+export interface FindOneRequest {
+  email: string;
+}
+
 export interface Void {
+}
+
+export interface User {
+  id: string;
+  username: string;
+  email: string;
+  password: string;
+  avatar: string;
+  refreshToken: string;
+  recoveryToken: string;
+}
+
+export interface PartialUser {
+  id?: string | undefined;
+  username: string;
+  email: string;
+  password: string;
+  avatar: string;
+  refreshToken: string;
+  recoveryToken: string;
 }
 
 export const USER_PACKAGE_NAME = "user";
@@ -45,6 +70,10 @@ export interface UserServiceClient {
   changingAvatar(request: ChangingAvatarRequest): Observable<Void>;
 
   changePassword(request: ChangePasswordRequest): Observable<Void>;
+
+  findOne(request: FindOneRequest): Observable<User>;
+
+  save(request: PartialUser): Observable<User>;
 }
 
 export interface UserServiceController {
@@ -59,11 +88,22 @@ export interface UserServiceController {
   changingAvatar(request: ChangingAvatarRequest): Promise<Void> | Observable<Void> | Void;
 
   changePassword(request: ChangePasswordRequest): Promise<Void> | Observable<Void> | Void;
+
+  findOne(request: FindOneRequest): Promise<User> | Observable<User> | User;
+
+  save(request: PartialUser): Promise<User> | Observable<User> | User;
 }
 
 export function UserServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["getUrlToDownloadSound", "getListSounds", "changingAvatar", "changePassword"];
+    const grpcMethods: string[] = [
+      "getUrlToDownloadSound",
+      "getListSounds",
+      "changingAvatar",
+      "changePassword",
+      "findOne",
+      "save",
+    ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("UserService", method)(constructor.prototype[method], method, descriptor);

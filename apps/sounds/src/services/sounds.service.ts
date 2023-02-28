@@ -17,6 +17,16 @@ export class SoundsService implements OnModuleInit {
   }
 
   //----------------------------------------------------------------
+  async findOne(soundId: string): Promise<Sound | null> {
+    return this.soundRepository.findOne({ where: { id: soundId } });
+  }
+
+  //----------------------------------------------------------------
+  async find(userId: string): Promise<Sound[]> {
+    return this.soundRepository.find({ where: { userId: userId } });
+  }
+
+  //----------------------------------------------------------------
   async uploadSound(buffer: Buffer, userId: string): Promise<Void> {
     const uploadResult = await s3
       .upload({

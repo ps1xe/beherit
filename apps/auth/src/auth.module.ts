@@ -5,6 +5,11 @@ import { config } from '@beherit/config';
 import { JwtModule } from '@nestjs/jwt';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter.js';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import {
+  USER_PACKAGE_NAME,
+  USER_SERVICE_NAME,
+} from '@beherit/grpc/protobufs/user.pb';
 
 @Module({
   imports: [
@@ -28,6 +33,17 @@ import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter.js'
         },
       }),
     }),
+    ClientsModule.register([
+      {
+        name: USER_SERVICE_NAME,
+        transport: Transport.GRPC,
+        options: {
+          url: '0.0.0.0:50052',
+          package: USER_PACKAGE_NAME,
+          protoPath: '../../libs/grpc/src/protos/user.proto',
+        },
+      },
+    ]),
   ],
   controllers: [AuthController],
   providers: [AuthService],

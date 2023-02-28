@@ -1,7 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { typeorm } from '../typeorm-connection.js';
-import { Sound } from '@beherit/typeorm/entities/Sound';
-import { User } from '@beherit/typeorm/entities/User';
 import { config } from '@beherit/config';
 import { GetUrlToDownloadResponseDto } from '../dto/get-url-response.dto.js';
 import { Repository } from 'typeorm';
@@ -9,29 +7,56 @@ import { s3 } from '../s3-connection.js';
 import { OnModuleInit } from '@nestjs/common/interfaces/index.js';
 import { v4 as uuid } from 'uuid';
 import * as bcrypt from 'bcrypt';
-import { RpcException } from '@nestjs/microservices';
+import { ClientGrpc, RpcException } from '@nestjs/microservices';
 import { GetListSoundsResponseDto } from '../dto/get-list-sounds-response.dto.js';
 import { Void } from '@beherit/grpc/protobufs/user.pb';
+import { SaveDto } from '../dto/save.dto.js';
+import { User, User as UserEntity } from '@beherit/typeorm/entities/User';
+import { lastValueFrom } from 'rxjs';
+import {
+  SoundsServiceClient,
+  SOUNDS_SERVICE_NAME,
+} from '@beherit/grpc/protobufs/sounds.pb';
 
 @Injectable()
 export class UsersService implements OnModuleInit {
-  private soundRepository: Repository<Sound>;
-  private userRepository: Repository<User>;
+  private svc: SoundsServiceClient;
+  private userRepository: Repository<UserEntity>;
+
+  constructor(
+    @Inject(SOUNDS_SERVICE_NAME)
+    private readonly soundsClient: ClientGrpc,
+  ) {}
 
   onModuleInit(): void {
-    this.soundRepository = typeorm.getRepository(Sound);
-    this.userRepository = typeorm.getRepository(User);
+    this.svc =
+      this.soundsClient.getService<SoundsServiceClient>(SOUNDS_SERVICE_NAME);
+    this.userRepository = typeorm.getRepository(UserEntity);
+  }
+
+  //----------------------------------------------------------------
+  async findOne(email: string): Promise<User | null> {
+    try {
+      return this.userRepository.findOne({ where: { email: email } });
+    } catch (exception) {
+      throw new RpcException('DB write error');
+    }
+  }
+
+  //----------------------------------------------------------------
+  async save(user: SaveDto): Promise<User> {
+    try {
+      return this.userRepository.save(user);
+    } catch (exception) {
+      throw new RpcException('DB write error');
+    }
   }
 
   //----------------------------------------------------------------
   async getUrlToDownloadSound(
     soundId: string,
   ): Promise<GetUrlToDownloadResponseDto> {
-    const sound = await this.soundRepository.findOne({
-      where: {
-        id: soundId,
-      },
-    });
+    const sound = await lastValueFrom(this.svc.findOne({ soundId }));
 
     if (!sound) {
       throw new RpcException('Sound not found');
@@ -50,13 +75,9 @@ export class UsersService implements OnModuleInit {
 
   //----------------------------------------------------------------
   async getListSounds(userId: string): Promise<GetListSoundsResponseDto> {
-    const sounds = await this.soundRepository.find({
-      where: {
-        userId: userId,
-      },
-    });
+    const findSounds = await lastValueFrom(this.svc.find({ userId }));
 
-    const sounds_ids = sounds.map((sound) => {
+    const sounds_ids = findSounds.sounds.map((sound) => {
       return sound.id;
     });
 

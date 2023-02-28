@@ -7,6 +7,8 @@ service UserService{
     rpc GetListSounds (GetListSoundsRequest) returns (GetListSoundsResponse) {}
     rpc ChangingAvatar (ChangingAvatarRequest) returns (Void) {}
     rpc ChangePassword (ChangePasswordRequest) returns (Void) {}
+    rpc FindOne (FindOneRequest) returns (User) {}
+    rpc Save (PartialUser) returns (User) {}
 }
 
 //GetUrlToDownloadSound
@@ -46,6 +48,33 @@ message ChangePasswordRequest{
     string newPassword = 3;
 }
 
+//FindOne
+message FindOneRequest{
+    string email = 1;
+}
+
 //Common massages
 
 message Void{}
+
+//Entity
+
+message User{
+    string id = 1;
+    string username = 2;
+    string email = 3;
+    string password = 4;
+    string avatar = 5;
+    string refreshToken = 6;
+    string recoveryToken = 7;
+}
+
+message PartialUser{
+    optional string id = 1;
+    string username = 2;
+    string email = 3;
+    string password = 4;
+    string avatar = 5;
+    string refreshToken = 6;
+    string recoveryToken = 7;
+}
