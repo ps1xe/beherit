@@ -13,6 +13,10 @@ export interface FindOneRequest {
   soundId: string;
 }
 
+export interface FindOneResponse {
+  data?: Sound | undefined;
+}
+
 export interface FindRequest {
   userId: string;
 }
@@ -35,7 +39,7 @@ export const SOUNDS_PACKAGE_NAME = "sounds";
 export interface SoundsServiceClient {
   uploadSound(request: UploadSoundRequest): Observable<Void>;
 
-  findOne(request: FindOneRequest): Observable<Sound>;
+  findOne(request: FindOneRequest): Observable<FindOneResponse>;
 
   find(request: FindRequest): Observable<FindResponse>;
 }
@@ -43,7 +47,7 @@ export interface SoundsServiceClient {
 export interface SoundsServiceController {
   uploadSound(request: UploadSoundRequest): Promise<Void> | Observable<Void> | Void;
 
-  findOne(request: FindOneRequest): Promise<Sound> | Observable<Sound> | Sound;
+  findOne(request: FindOneRequest): Promise<FindOneResponse> | Observable<FindOneResponse> | FindOneResponse;
 
   find(request: FindRequest): Promise<FindResponse> | Observable<FindResponse> | FindResponse;
 }

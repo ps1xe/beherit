@@ -1,5 +1,7 @@
 import { Controller } from '@nestjs/common';
 import {
+  FindOneResponse,
+  FindResponse,
   Sound,
   SOUNDS_SERVICE_NAME,
   Void,
@@ -27,12 +29,14 @@ export class SoundsController {
   }
 
   @GrpcMethod(SOUNDS_SERVICE_NAME, 'FindOne')
-  async findOne({ soundId }: FindOneDto): Promise<Sound> {
-    return this.soundsService.findOne(soundId);
+  async findOne({ soundId }: FindOneDto): Promise<FindOneResponse> {
+    const sound = await this.soundsService.findOne(soundId);
+    return { data: sound };
   }
 
   @GrpcMethod(SOUNDS_SERVICE_NAME, 'Find')
-  async find({ userId }: FindDto): Promise<Sound[]> {
-    return this.soundsService.find(userId);
+  async find({ userId }: FindDto): Promise<FindResponse> {
+    const sounds = await this.soundsService.find(userId);
+    return { sounds: sounds };
   }
 }

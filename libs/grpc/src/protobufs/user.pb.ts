@@ -37,6 +37,10 @@ export interface FindOneRequest {
   email: string;
 }
 
+export interface FindOneResponse {
+  data?: User | undefined;
+}
+
 export interface Void {
 }
 
@@ -71,7 +75,7 @@ export interface UserServiceClient {
 
   changePassword(request: ChangePasswordRequest): Observable<Void>;
 
-  findOne(request: FindOneRequest): Observable<User>;
+  findOne(request: FindOneRequest): Observable<FindOneResponse>;
 
   save(request: PartialUser): Observable<User>;
 }
@@ -89,7 +93,7 @@ export interface UserServiceController {
 
   changePassword(request: ChangePasswordRequest): Promise<Void> | Observable<Void> | Void;
 
-  findOne(request: FindOneRequest): Promise<User> | Observable<User> | User;
+  findOne(request: FindOneRequest): Promise<FindOneResponse> | Observable<FindOneResponse> | FindOneResponse;
 
   save(request: PartialUser): Promise<User> | Observable<User> | User;
 }

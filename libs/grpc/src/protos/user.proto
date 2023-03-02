@@ -7,7 +7,7 @@ service UserService{
     rpc GetListSounds (GetListSoundsRequest) returns (GetListSoundsResponse) {}
     rpc ChangingAvatar (ChangingAvatarRequest) returns (Void) {}
     rpc ChangePassword (ChangePasswordRequest) returns (Void) {}
-    rpc FindOne (FindOneRequest) returns (User) {}
+    rpc FindOne (FindOneRequest) returns (FindOneResponse) {}
     rpc Save (PartialUser) returns (User) {}
 }
 
@@ -52,6 +52,11 @@ message ChangePasswordRequest{
 message FindOneRequest{
     string email = 1;
 }
+
+message FindOneResponse{
+   optional User data = 1; 
+}
+
 
 //Common massages
 

@@ -1,4 +1,5 @@
 import {
+  FindOneResponse,
   PartialUser,
   User,
   USER_SERVICE_NAME,
@@ -58,8 +59,9 @@ export class UsersController {
   }
 
   @GrpcMethod(USER_SERVICE_NAME, 'FindOne')
-  async findOne({ email }: findOneDto): Promise<User | null> {
-    return this.userService.findOne(email);
+  async findOne({ email }: findOneDto): Promise<FindOneResponse> {
+    const user = await this.userService.findOne(email);
+    return { data: user };
   }
 
   @GrpcMethod(USER_SERVICE_NAME, 'Save')

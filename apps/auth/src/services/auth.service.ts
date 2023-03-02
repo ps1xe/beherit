@@ -41,7 +41,7 @@ export class AuthService implements OnModuleInit {
   ): Promise<RegisterResponseDto> {
     const user = await lastValueFrom(this.svc.findOne({ email: email }));
 
-    if (user) {
+    if (user.data) {
       throw new RpcException('Email already exists');
     }
 
@@ -75,7 +75,7 @@ export class AuthService implements OnModuleInit {
       recoveryToken: 'null',
     };
 
-    this.svc.save(newUser);
+    lastValueFrom(this.svc.save(newUser));
 
     return { token: token, refreshToken: refreshToken };
   }
@@ -88,7 +88,10 @@ export class AuthService implements OnModuleInit {
       throw new RpcException('Email not found');
     }
 
-    const isPasswordValid = await bcrypt.compareSync(password, user.password);
+    const isPasswordValid = await bcrypt.compareSync(
+      password,
+      user.data.password,
+    );
     if (!isPasswordValid) {
       throw new RpcException('Password wrong');
     }
@@ -96,7 +99,7 @@ export class AuthService implements OnModuleInit {
     const token = await this.jwtService.signAsync(
       {
         id: randomUUID(),
-        email: user.email,
+        email: user.data.email,
       },
       { secret: config.JWT_SECRET_KEY, expiresIn: '30m' },
     );
@@ -104,7 +107,7 @@ export class AuthService implements OnModuleInit {
     const refreshToken = await this.jwtService.signAsync(
       {
         id: randomUUID(),
-        email: user.email,
+        email: user.data.email,
       },
       { secret: config.JWT_REFRESH_SECRET_KEY, expiresIn: '60d' },
     );
@@ -112,10 +115,12 @@ export class AuthService implements OnModuleInit {
     const salt = await bcrypt.genSalt(5);
     const hashedRefreshToken = await bcrypt.hashSync(refreshToken, salt);
 
-    this.svc.save({
-      ...user,
-      refreshToken: hashedRefreshToken,
-    });
+    lastValueFrom(
+      this.svc.save({
+        ...user.data,
+        refreshToken: hashedRefreshToken,
+      }),
+    );
 
     return {
       token: token,
@@ -140,7 +145,7 @@ export class AuthService implements OnModuleInit {
       throw new RpcException('User not found');
     }
 
-    return { userId: user.id };
+    return { userId: user.data.id };
   }
 
   //----------------------------------------------------------------------------------
@@ -158,7 +163,7 @@ export class AuthService implements OnModuleInit {
 
     const coincidenceTokens = await bcrypt.compareSync(
       refreshToken,
-      user.refreshToken,
+      user.data.refreshToken,
     );
 
     if (!coincidenceTokens) {
@@ -168,7 +173,7 @@ export class AuthService implements OnModuleInit {
     const updatedToken = await this.jwtService.signAsync(
       {
         id: randomUUID(),
-        email: user.email,
+        email: user.data.email,
       },
       { secret: config.JWT_SECRET_KEY, expiresIn: '30m' },
     );
@@ -176,7 +181,7 @@ export class AuthService implements OnModuleInit {
     const updatedRefreshToken = await this.jwtService.signAsync(
       {
         id: randomUUID(),
-        email: user.email,
+        email: user.data.email,
       },
       { secret: config.JWT_REFRESH_SECRET_KEY, expiresIn: '60d' },
     );
@@ -187,10 +192,12 @@ export class AuthService implements OnModuleInit {
       salt,
     );
 
-    this.svc.save({
-      ...user,
-      refreshToken: hashedUpdatedRefreshToken,
-    });
+    lastValueFrom(
+      this.svc.save({
+        ...user.data,
+        refreshToken: hashedUpdatedRefreshToken,
+      }),
+    );
 
     return { token: updatedToken, refreshToken: updatedRefreshToken };
   }
@@ -214,10 +221,12 @@ export class AuthService implements OnModuleInit {
     const salt = await bcrypt.genSalt(5);
     const hashedRecoveryToken = await bcrypt.hashSync(tokenRecovery, salt);
 
-    this.svc.save({
-      ...user,
-      recoveryToken: hashedRecoveryToken,
-    });
+    lastValueFrom(
+      this.svc.save({
+        ...user.data,
+        recoveryToken: hashedRecoveryToken,
+      }),
+    );
 
     const url = `http://localhost:4000/auth/resetPassword/${tokenRecovery}`;
 
@@ -230,7 +239,7 @@ export class AuthService implements OnModuleInit {
         //   username: user.username,
         //   url: url,
         // },
-        html: `<div> Доброго дня, ${user.username}.</div> <div>Для восстановления пароля пройдите пожалуйста по <a href = "${url}">ссылке</a></div>`,
+        html: `<div> Доброго дня, ${user.data.username}.</div> <div>Для восстановления пароля пройдите пожалуйста по <a href = "${url}">ссылке</a></div>`,
       })
       .catch((exception) => {
         throw new RpcException(
@@ -255,7 +264,10 @@ export class AuthService implements OnModuleInit {
       throw new RpcException('User not found');
     }
 
-    const coincidenceTokens = bcrypt.compareSync(token, user.recoveryToken);
+    const coincidenceTokens = bcrypt.compareSync(
+      token,
+      user.data.recoveryToken,
+    );
 
     if (!coincidenceTokens) {
       throw new RpcException('Recovery token invalid');
@@ -264,11 +276,13 @@ export class AuthService implements OnModuleInit {
     const salt = await bcrypt.genSalt(5);
     const hashedPassword = await bcrypt.hashSync(newPassword, salt);
 
-    this.svc.save({
-      ...user,
-      password: hashedPassword,
-      recoveryToken: 'null',
-    });
+    lastValueFrom(
+      this.svc.save({
+        ...user.data,
+        password: hashedPassword,
+        recoveryToken: 'null',
+      }),
+    );
 
     return {};
   }

@@ -35,9 +35,17 @@ export class UsersService implements OnModuleInit {
   }
 
   //----------------------------------------------------------------
-  async findOne(email: string): Promise<User | null> {
+  async findOne(email: string): Promise<User | undefined> {
     try {
-      return this.userRepository.findOne({ where: { email: email } });
+      const user = await this.userRepository.findOne({
+        where: { email: email },
+      });
+
+      if (!user) {
+        return undefined;
+      }
+
+      return user;
     } catch (exception) {
       throw new RpcException('DB write error');
     }
@@ -58,14 +66,14 @@ export class UsersService implements OnModuleInit {
   ): Promise<GetUrlToDownloadResponseDto> {
     const sound = await lastValueFrom(this.svc.findOne({ soundId }));
 
-    if (!sound) {
+    if (!sound.data) {
       throw new RpcException('Sound not found');
     }
 
     const paramsForUrl = {
       Bucket: config.S3_BUCKET_NAME_SOUNDS,
       Expires: 5000,
-      Key: sound.key,
+      Key: sound.data.key,
     };
 
     const url = await s3.getSignedUrlPromise('getObject', paramsForUrl);
@@ -76,6 +84,10 @@ export class UsersService implements OnModuleInit {
   //----------------------------------------------------------------
   async getListSounds(userId: string): Promise<GetListSoundsResponseDto> {
     const findSounds = await lastValueFrom(this.svc.find({ userId }));
+
+    if (!findSounds.sounds) {
+      return { sounds: [] };
+    }
 
     const sounds_ids = findSounds.sounds.map((sound) => {
       return sound.id;

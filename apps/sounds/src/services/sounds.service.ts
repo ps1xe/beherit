@@ -17,13 +17,23 @@ export class SoundsService implements OnModuleInit {
   }
 
   //----------------------------------------------------------------
-  async findOne(soundId: string): Promise<Sound | null> {
-    return this.soundRepository.findOne({ where: { id: soundId } });
+  async findOne(soundId: string): Promise<Sound | undefined> {
+    const sound = this.soundRepository.findOne({ where: { id: soundId } });
+
+    if (!sound) {
+      return undefined;
+    }
+
+    return sound;
   }
 
   //----------------------------------------------------------------
   async find(userId: string): Promise<Sound[]> {
-    return this.soundRepository.find({ where: { userId: userId } });
+    const sounds = await this.soundRepository.find({
+      where: { userId: userId },
+    });
+
+    return sounds;
   }
 
   //----------------------------------------------------------------
