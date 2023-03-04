@@ -18,6 +18,7 @@ export interface FindOneResponse {
 }
 
 export interface FindRequest {
+  pageOptions: PageOptionsDto | undefined;
   userId: string;
 }
 
@@ -32,6 +33,18 @@ export interface Sound {
   id: string;
   key: string;
   userId: string;
+}
+
+export interface PageOptionsDto {
+  order: Order | undefined;
+  page: number;
+  take: number;
+  skip: number;
+}
+
+export interface Order {
+  ASC: string;
+  DESC: string;
 }
 
 export const SOUNDS_PACKAGE_NAME = "sounds";

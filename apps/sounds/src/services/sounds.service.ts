@@ -7,6 +7,9 @@ import { s3 } from '../s3-connection.js';
 import { Repository } from 'typeorm';
 import { Void } from '@beherit/grpc/protobufs/sounds.pb';
 import { RpcException } from '@nestjs/microservices';
+import { PageOptionsDto } from '@beherit/common/pagination/dto/PageOptionsDto';
+import { PageDto } from '@beherit/common/pagination/dto/PageDto';
+import { PageMetaDto } from '@beherit/common/pagination/dto/PageMetaDto';
 
 @Injectable()
 export class SoundsService implements OnModuleInit {
@@ -28,12 +31,24 @@ export class SoundsService implements OnModuleInit {
   }
 
   //----------------------------------------------------------------
-  async find(userId: string): Promise<Sound[]> {
-    const sounds = await this.soundRepository.find({
-      where: { userId: userId },
-    });
+  async find(
+    pageOptionsDto: PageOptionsDto,
+    userId: string,
+  ): Promise<PageDto<Sound>> {
+    const queryBuilder = this.soundRepository.createQueryBuilder('sound');
 
-    return sounds;
+    queryBuilder
+      .where('sound.userId = :userId', { userId: userId })
+      .orderBy('sound.createdAt', pageOptionsDto.order)
+      .skip(pageOptionsDto.skip)
+      .take(pageOptionsDto.take);
+
+    const itemCount = await queryBuilder.getCount();
+    const { entities } = await queryBuilder.getRawAndEntities();
+
+    const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
+
+    return new PageDto(entities, pageMetaDto);
   }
 
   //----------------------------------------------------------------

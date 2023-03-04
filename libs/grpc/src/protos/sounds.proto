@@ -28,7 +28,8 @@ message FindOneResponse{
 //Find
 
 message FindRequest{
-    string userId = 1;
+    PageOptionsDto pageOptions = 1;
+    string userId = 2;
 }
 
 message FindResponse{
@@ -45,4 +46,18 @@ message Sound{
     string id = 1;
     string key = 2;
     string userId = 3;
+}
+
+// Dto
+
+message PageOptionsDto{
+    Order order = 1;
+    int32 page = 2;
+    int32 take = 3;
+    int32 skip = 4;
+}
+
+message Order{
+    string ASC = 1;
+    string DESC = 2;
 }

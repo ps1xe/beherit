@@ -14,6 +14,7 @@ import { UseFilters } from '@nestjs/common/decorators/core/exception-filters.dec
 import { RpcExceptionFilter } from '../filters/rpc-exception.filter.js';
 import { FindOneDto } from '../dto/find-one.dto.js';
 import { FindDto } from '../dto/find.dto.js';
+import { PageOptionsDto } from '@beherit/common/pagination/dto/PageOptionsDto';
 
 @UseFilters(new RpcExceptionFilter())
 @Controller()
@@ -35,8 +36,8 @@ export class SoundsController {
   }
 
   @GrpcMethod(SOUNDS_SERVICE_NAME, 'Find')
-  async find({ userId }: FindDto): Promise<FindResponse> {
-    const sounds = await this.soundsService.find(userId);
-    return { sounds: sounds };
+  async find({ pageOptions, userId }: FindDto): Promise<FindResponse> {
+    const page = await this.soundsService.find(pageOptions, userId);
+    return { sounds: page.data };
   }
 }
