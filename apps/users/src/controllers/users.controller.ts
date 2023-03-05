@@ -31,9 +31,10 @@ export class UsersController {
 
   @GrpcMethod(USER_SERVICE_NAME, 'GetListSounds')
   async getListSounds({
+    pageOptions,
     userId,
   }: GetListSoundsRequsetDto): Promise<GetListSoundsResponseDto> {
-    return this.userService.getListSounds(userId);
+    return this.userService.getListSounds(pageOptions, userId);
   }
 
   @GrpcMethod(USER_SERVICE_NAME, 'ChangingAvatar')

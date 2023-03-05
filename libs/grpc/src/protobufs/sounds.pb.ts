@@ -39,7 +39,6 @@ export interface PageOptionsDto {
   order: Order | undefined;
   page: number;
   take: number;
-  skip: number;
 }
 
 export interface Order {

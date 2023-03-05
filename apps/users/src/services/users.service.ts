@@ -14,6 +14,7 @@ import { SaveDto } from '../dto/save.dto.js';
 import { User, User as UserEntity } from '@beherit/typeorm/entities/User';
 import { lastValueFrom } from 'rxjs';
 import {
+  PageOptionsDto,
   SoundsServiceClient,
   SOUNDS_SERVICE_NAME,
 } from '@beherit/grpc/protobufs/sounds.pb';
@@ -82,8 +83,13 @@ export class UsersService implements OnModuleInit {
   }
 
   //----------------------------------------------------------------
-  async getListSounds(userId: string): Promise<GetListSoundsResponseDto> {
-    const findSounds = await lastValueFrom(this.svc.find({ userId }));
+  async getListSounds(
+    pageOptions: PageOptionsDto,
+    userId: string,
+  ): Promise<GetListSoundsResponseDto> {
+    const findSounds = await lastValueFrom(
+      this.svc.find({ pageOptions, userId }),
+    );
 
     if (!findSounds.sounds) {
       return { sounds: [] };

@@ -13,6 +13,7 @@ export interface GetUrlSoundResponse {
 }
 
 export interface GetListSoundsRequest {
+  pageOptions: PageOptionsDto | undefined;
   userId: string;
 }
 
@@ -62,6 +63,17 @@ export interface PartialUser {
   avatar: string;
   refreshToken: string;
   recoveryToken: string;
+}
+
+export interface PageOptionsDto {
+  order: Order | undefined;
+  page: number;
+  take: number;
+}
+
+export interface Order {
+  ASC: string;
+  DESC: string;
 }
 
 export const USER_PACKAGE_NAME = "user";

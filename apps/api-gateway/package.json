@@ -21,6 +21,7 @@
         "test:e2e": "jest --config ./test/jest-e2e.json"
     },
     "dependencies": {
+        "@beherit/common": "*",
         "@beherit/config": "*",
         "@beherit/grpc": "*",
         "@beherit/typeorm": "*",

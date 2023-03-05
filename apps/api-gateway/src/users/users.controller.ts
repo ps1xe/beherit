@@ -6,6 +6,7 @@ import {
   OnModuleInit,
   Param,
   Post,
+  Query,
   Req,
   UploadedFile,
   UseGuards,
@@ -23,6 +24,7 @@ import { AuthService } from '../auth/auth.service.js';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '../auth/guards/auth.guard.js';
 import { lastValueFrom } from 'rxjs';
+import { PageOptionsDto } from '@beherit/common/pagination/dto/PageOptionsDto';
 
 @Controller('users')
 @UseGuards(AuthGuard)
@@ -49,11 +51,15 @@ export class UsersController implements OnModuleInit {
   }
 
   @Get('getSounds')
-  async getListSounds(@Req() request: Request): Promise<GetListSoundsResponse> {
+  async getListSounds(
+    @Req() request: Request,
+    @Query() pageOptions: PageOptionsDto,
+  ): Promise<GetListSoundsResponse> {
     const token = request.cookies.token;
     const { userId } = await this.authService.validate(token);
     const urls = await lastValueFrom(
       this.svc.getListSounds({
+        pageOptions: pageOptions,
         userId: userId,
       }),
     );

@@ -24,7 +24,8 @@ message GetUrlSoundResponse{
 //GetListSounds
 
 message GetListSoundsRequest{
-    string userId = 1;
+    PageOptionsDto pageOptions = 1;
+    string userId = 2;
 }
 
 message GetListSoundsResponse{
@@ -82,4 +83,17 @@ message PartialUser{
     string avatar = 5;
     string refreshToken = 6;
     string recoveryToken = 7;
+}
+
+//Dto
+
+message PageOptionsDto{
+    Order order = 1;
+    int32 page = 2;
+    int32 take = 3;
+}
+
+message Order{
+    string ASC = 1;
+    string DESC = 2;
 }

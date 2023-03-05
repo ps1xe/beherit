@@ -54,7 +54,6 @@ message PageOptionsDto{
     Order order = 1;
     int32 page = 2;
     int32 take = 3;
-    int32 skip = 4;
 }
 
 message Order{
