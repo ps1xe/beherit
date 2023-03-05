@@ -88,12 +88,7 @@ message PartialUser{
 //Dto
 
 message PageOptionsDto{
-    Order order = 1;
-    int32 page = 2;
-    int32 take = 3;
-}
-
-message Order{
-    string ASC = 1;
-    string DESC = 2;
+    optional string order = 1;
+    optional int32 page = 2;
+    optional int32 take = 3;
 }

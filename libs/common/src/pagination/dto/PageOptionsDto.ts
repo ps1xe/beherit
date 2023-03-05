@@ -1,11 +1,9 @@
 import { Type } from 'class-transformer';
-import { IsEnum, IsInt, IsOptional, Max, Min } from 'class-validator';
-import { Order } from '../enums/order.js';
+import { IsInt, IsOptional, Max, Min } from 'class-validator';
 
 export class PageOptionsDto {
-  @IsEnum(Order)
   @IsOptional()
-  readonly order?: Order = Order.ASC;
+  readonly order?: 'ASC' | 'DESC';
 
   @Type(() => Number)
   @IsInt()

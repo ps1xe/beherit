@@ -36,14 +36,9 @@ export interface Sound {
 }
 
 export interface PageOptionsDto {
-  order: Order | undefined;
-  page: number;
-  take: number;
-}
-
-export interface Order {
-  ASC: string;
-  DESC: string;
+  order?: string | undefined;
+  page?: number | undefined;
+  take?: number | undefined;
 }
 
 export const SOUNDS_PACKAGE_NAME = "sounds";
