@@ -1,7 +1,7 @@
 import { UpdateTokensResponse } from '@beherit/grpc/protobufs/auth.pb';
 
 export class UpdateTokensResponseDto implements UpdateTokensResponse {
-  token!: string;
+  token: string;
 
-  refreshToken!: string;
+  refreshToken: string;
 }
