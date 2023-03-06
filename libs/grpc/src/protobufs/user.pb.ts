@@ -19,6 +19,7 @@ export interface GetListSoundsRequest {
 
 export interface GetListSoundsResponse {
   sounds: string[];
+  meta: PageMeta | undefined;
 }
 
 export interface ChangingAvatarRequest {
@@ -69,6 +70,15 @@ export interface PageOptionsDto {
   order?: string | undefined;
   page?: number | undefined;
   take?: number | undefined;
+}
+
+export interface PageMeta {
+  page: number;
+  take: number;
+  itemCount: number;
+  pageCount: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
 }
 
 export const USER_PACKAGE_NAME = "user";

@@ -34,6 +34,7 @@ message FindRequest{
 
 message FindResponse{
     repeated Sound sounds = 1;
+    PageMeta meta = 2;
 }
 
 //Common massages
@@ -54,4 +55,13 @@ message PageOptionsDto{
     optional string order = 1;
     optional int32 page = 2;
     optional int32 take = 3;
+}
+
+message PageMeta{
+    int32 page = 1;
+    int32 take = 2;
+    int32 itemCount = 3;
+    int32 pageCount = 4;
+    bool hasPreviousPage = 5;
+    bool hasNextPage = 6;
 }

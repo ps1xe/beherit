@@ -92,7 +92,7 @@ export class UsersService implements OnModuleInit {
     );
 
     if (!findSounds.sounds) {
-      return { sounds: [] };
+      return { sounds: [], meta: findSounds.meta };
     }
 
     const sounds_ids = findSounds.sounds.map((sound) => {
@@ -106,7 +106,7 @@ export class UsersService implements OnModuleInit {
       urls.push(getUrlObject.url);
     }
 
-    return { sounds: urls };
+    return { sounds: urls, meta: findSounds.meta };
   }
 
   //----------------------------------------------------------------

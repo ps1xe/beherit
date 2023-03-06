@@ -5,13 +5,15 @@
     "license": "MIT",
     "version": "0.0.1",
     "exports": {
-        ".": "./dist/src/index.js"
+        ".": "./dist/src/index.js",
+        "./pagination/dto/*": "./dist/src/pagination/dto/*.js"
     },
     "typesVersions": {
         "*": {
             "*": [
                 "./dist/src/*.d.ts"
-            ]
+            ],
+            "pagination/dto": ["./dist/src/pagination/dto/*.d.ts"]
         }
     },
     "scripts": {

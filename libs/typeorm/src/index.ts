@@ -8,5 +8,5 @@ export const AppDataSource = new DataSource({
   url: config.DATABASE_URL,
   entities: [User, Sound],
   migrations: ['src/migrations/*.ts'],
-  synchronize: true,
+  migrationsTableName: 'typeorm_migrations',
 });

@@ -24,6 +24,7 @@ export interface FindRequest {
 
 export interface FindResponse {
   sounds: Sound[];
+  meta: PageMeta | undefined;
 }
 
 export interface Void {
@@ -39,6 +40,15 @@ export interface PageOptionsDto {
   order?: string | undefined;
   page?: number | undefined;
   take?: number | undefined;
+}
+
+export interface PageMeta {
+  page: number;
+  take: number;
+  itemCount: number;
+  pageCount: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
 }
 
 export const SOUNDS_PACKAGE_NAME = "sounds";

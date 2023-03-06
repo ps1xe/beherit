@@ -3,7 +3,7 @@ import { IsInt, IsOptional, Max, Min } from 'class-validator';
 
 export class PageOptionsDto {
   @IsOptional()
-  readonly order?: 'ASC' | 'DESC';
+  readonly order?: 'ASC' | 'DESC' = 'ASC';
 
   @Type(() => Number)
   @IsInt()
