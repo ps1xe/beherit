@@ -31,9 +31,6 @@ export class User extends BaseEntity {
   @Column({ name: 'recovery_token' })
   recoveryToken!: string;
 
-  @Column({ name: 'recovedry_token' })
-  recoveryToen!: string;
-
   @OneToMany(() => Sound, (sounds) => sounds.user)
   sounds!: Relation<Sound>[];
 }
