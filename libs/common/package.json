@@ -6,14 +6,16 @@
     "version": "0.0.1",
     "exports": {
         ".": "./dist/src/index.js",
-        "./pagination/dto/*": "./dist/src/pagination/dto/*.js"
+        "./pagination/dto/*": "./dist/src/pagination/dto/*.js",
+        "./s3/*": "./dist/src/s3/s3-connection.js"
     },
     "typesVersions": {
         "*": {
             "*": [
                 "./dist/src/*.d.ts"
             ],
-            "pagination/dto": ["./dist/src/pagination/dto/*.d.ts"]
+            "pagination/dto": ["./dist/src/pagination/dto/*.d.ts"],
+            "s3": ["./dist/src/s3/*.d.ts"]
         }
     },
     "scripts": {

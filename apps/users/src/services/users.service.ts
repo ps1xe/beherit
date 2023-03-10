@@ -3,7 +3,7 @@ import { typeorm } from '../typeorm-connection.js';
 import { config } from '@beherit/config';
 import { GetUrlToDownloadResponseDto } from '../dto/get-url-response.dto.js';
 import { Repository } from 'typeorm';
-import { s3 } from '../s3-connection.js';
+import { s3 } from '@beherit/common/s3/s3-connection';
 import { OnModuleInit } from '@nestjs/common/interfaces/index.js';
 import { v4 as uuid } from 'uuid';
 import * as bcrypt from 'bcrypt';

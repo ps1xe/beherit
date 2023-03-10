@@ -3,7 +3,7 @@ import { v4 as uuid } from 'uuid';
 import { typeorm } from '../typeorm-connection.js';
 import { Sound } from '@beherit/typeorm/entities/Sound';
 import { config } from '@beherit/config';
-import { s3 } from '../s3-connection.js';
+import { s3 } from '@beherit/common/s3/s3-connection';
 import { Repository } from 'typeorm';
 import { Void } from '@beherit/grpc/protobufs/sounds.pb';
 import { RpcException } from '@nestjs/microservices';
