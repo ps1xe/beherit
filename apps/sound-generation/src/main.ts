@@ -1,7 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import { SoundGenerationModule } from './sg.module';
+import { SoundGenerationModule } from './ml.module';
 import { SOUND_GENERATION_PACKAGE_NAME } from '@beherit/grpc/protobufs/sound-generation.pb';
 
 const microserviceOptions = {

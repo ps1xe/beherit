@@ -16,6 +16,9 @@ export class Sound extends BaseEntity {
   @Column({ name: 'key' })
   key!: string;
 
+  @Column({ name: 'genre' })
+  genre!: string;
+
   @Column()
   userId!: User['id'];
 

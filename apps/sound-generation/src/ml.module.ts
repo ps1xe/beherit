@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { SoundGenerationController } from './controllers/sg.controller.js';
-import { SoundGenerationService } from './services/sg.service.js';
+import { SoundGenerationController } from './controllers/ml.controller.js';
+import { SoundGenerationService } from './services/ml.service.js';
 
 @Module({
   imports: [],
