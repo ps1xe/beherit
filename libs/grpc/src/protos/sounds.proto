@@ -3,17 +3,10 @@ syntax = "proto3";
 package sounds;
 
 service SoundsService{
-    rpc UploadSound (UploadSoundRequest) returns (Void) {}
     rpc FindOne (FindOneRequest) returns (FindOneResponse) {}
     rpc Find (FindRequest) returns (FindResponse) {}
 }
 
-//UploadSound
-
-message UploadSoundRequest{
-    bytes buffer = 1;
-    string userId = 2;
-}
 
 //FindOne
 

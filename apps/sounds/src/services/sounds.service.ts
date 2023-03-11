@@ -1,11 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { v4 as uuid } from 'uuid';
 import { typeorm } from '../typeorm-connection.js';
 import { Sound } from '@beherit/typeorm/entities/Sound';
-import { config } from '@beherit/config';
-import { s3 } from '@beherit/common/s3/s3-connection';
 import { Repository } from 'typeorm';
-import { Void } from '@beherit/grpc/protobufs/sounds.pb';
 import { RpcException } from '@nestjs/microservices';
 import { PageOptionsDto } from '@beherit/common/pagination/dto/PageOptionsDto';
 import { PageDto } from '@beherit/common/pagination/dto/PageDto';
@@ -64,31 +60,5 @@ export class SoundsService implements OnModuleInit {
         code: status.INTERNAL,
       });
     }
-  }
-
-  //----------------------------------------------------------------
-  async uploadSound(buffer: Buffer, userId: string): Promise<Void> {
-    const uploadResult = await s3
-      .upload({
-        Bucket: config.S3_BUCKET_NAME_SOUNDS,
-        Body: buffer,
-        Key: `${uuid()}.mp3`,
-      })
-      .promise();
-
-    const soundStorageInDB = {
-      key: uploadResult.Key,
-      userId: userId,
-    };
-
-    try {
-      this.soundRepository.save(soundStorageInDB);
-    } catch (exception) {
-      throw new RpcException({
-        message: 'Failed to added sound to DB',
-        code: status.INTERNAL,
-      });
-    }
-    return {};
   }
 }

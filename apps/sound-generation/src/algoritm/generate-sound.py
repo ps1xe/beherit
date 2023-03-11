@@ -7,7 +7,12 @@ from keras.layers import Dropout
 from keras.layers import LSTM
 from keras.layers import BatchNormalization as BatchNorm
 from keras.layers import Activation
+import boto3
+import uuid
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
 #----------------------------------------------------------------------------------------------------------------------
 #готовит данные для генератора
 def prepare_sequences(notes, pitchnames, n_vocab):
@@ -148,9 +153,32 @@ def create_midi(prediction_output):
         offset += 0.5
 
     midi_stream = stream.Stream(output_notes)
+    midi_stream.write('midi', fp='generated/tmp/generated-output.mid')
 
-    #запись в midi
-    midi_stream.write('midi', fp='generated/midi/test/test_output.mid')
+    with open('generated/tmp/generated-output.mid', 'rb') as f:
+        return f.read()
+
+
+ #----------------------------------------------------------------------------------------------------------------------
+ # сохранение в s3  
+def save_in_s3(buffer):
+
+    access_key = str(os.environ.get('S3_ACCESS_KEY_ID'))
+    secret_access_key = str(os.environ.get('S3_SECRET_ACCESS_KEY'))
+    endpoint_url = str(os.environ.get('S3_ENDPOINT'))
+    bucket = str(os.environ.get('S3_BUCKET_NAME_SOUNDS'))
+
+    session = boto3.session.Session()
+    s3 = session.client(
+    aws_access_key_id=access_key,
+    aws_secret_access_key=secret_access_key, 
+    service_name='s3',
+    endpoint_url= endpoint_url,
+)
+    
+    key = str(uuid.uuid4()) + '.midi'
+    s3.put_object(Bucket=bucket, Key=key, Body=buffer)
+    os.remove('generated/tmp/generated-output.mid')
 
 #----------------------------------------------------------------------------------------------------------------------
 #собираем все методы
@@ -164,9 +192,9 @@ def generate():
     network_input, normalized_input = prepare_sequences(notes, pitchnames, n_vocab)
     model = create_network(normalized_input, n_vocab)
     prediction_output = generate_notes(model, network_input, pitchnames, n_vocab)
-    create_midi(prediction_output)
-
-
+    midi = create_midi(prediction_output)
+    save_in_s3(midi)
+    
 
 if __name__ == '__main__':
     generate()

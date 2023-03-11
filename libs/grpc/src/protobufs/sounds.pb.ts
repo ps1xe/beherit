@@ -4,11 +4,6 @@ import { Observable } from "rxjs";
 
 export const protobufPackage = "sounds";
 
-export interface UploadSoundRequest {
-  buffer: Uint8Array;
-  userId: string;
-}
-
 export interface FindOneRequest {
   soundId: string;
 }
@@ -54,16 +49,12 @@ export interface PageMeta {
 export const SOUNDS_PACKAGE_NAME = "sounds";
 
 export interface SoundsServiceClient {
-  uploadSound(request: UploadSoundRequest): Observable<Void>;
-
   findOne(request: FindOneRequest): Observable<FindOneResponse>;
 
   find(request: FindRequest): Observable<FindResponse>;
 }
 
 export interface SoundsServiceController {
-  uploadSound(request: UploadSoundRequest): Promise<Void> | Observable<Void> | Void;
-
   findOne(request: FindOneRequest): Promise<FindOneResponse> | Observable<FindOneResponse> | FindOneResponse;
 
   find(request: FindRequest): Promise<FindResponse> | Observable<FindResponse> | FindResponse;
@@ -71,7 +62,7 @@ export interface SoundsServiceController {
 
 export function SoundsServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["uploadSound", "findOne", "find"];
+    const grpcMethods: string[] = ["findOne", "find"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("SoundsService", method)(constructor.prototype[method], method, descriptor);
