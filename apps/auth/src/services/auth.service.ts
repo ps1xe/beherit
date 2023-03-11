@@ -15,6 +15,7 @@ import {
   USER_SERVICE_NAME,
 } from '@beherit/grpc/protobufs/user.pb';
 import { lastValueFrom } from 'rxjs';
+import { status } from '@grpc/grpc-js';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
@@ -42,7 +43,10 @@ export class AuthService implements OnModuleInit {
     const user = await lastValueFrom(this.svc.findOne({ email: email }));
 
     if (user.data) {
-      throw new RpcException('Email already exists');
+      throw new RpcException({
+        message: 'Email already exists',
+        code: status.ALREADY_EXISTS,
+      });
     }
 
     const salt = await bcrypt.genSalt(5);
@@ -85,7 +89,10 @@ export class AuthService implements OnModuleInit {
     const user = await lastValueFrom(this.svc.findOne({ email }));
 
     if (!user) {
-      throw new RpcException('Email not found');
+      throw new RpcException({
+        message: 'Email not found',
+        code: status.NOT_FOUND,
+      });
     }
 
     const isPasswordValid = await bcrypt.compareSync(
@@ -93,7 +100,10 @@ export class AuthService implements OnModuleInit {
       user.data.password,
     );
     if (!isPasswordValid) {
-      throw new RpcException('Password wrong');
+      throw new RpcException({
+        message: 'Password wrong',
+        code: status.UNAUTHENTICATED,
+      });
     }
 
     const token = await this.jwtService.signAsync(
@@ -134,7 +144,10 @@ export class AuthService implements OnModuleInit {
       secret: config.JWT_SECRET_KEY,
     });
     if (!decoded) {
-      throw new RpcException('Token is invalid');
+      throw new RpcException({
+        message: 'Token is invalid',
+        code: status.UNAUTHENTICATED,
+      });
     }
 
     const user = await lastValueFrom(
@@ -142,7 +155,10 @@ export class AuthService implements OnModuleInit {
     );
 
     if (!user) {
-      throw new RpcException('User not found');
+      throw new RpcException({
+        message: 'User not found',
+        code: status.NOT_FOUND,
+      });
     }
 
     return { userId: user.data.id };
@@ -158,7 +174,10 @@ export class AuthService implements OnModuleInit {
       this.svc.findOne({ email: decoded.email }),
     );
     if (!user) {
-      throw new RpcException('User not found');
+      throw new RpcException({
+        message: 'User not found',
+        code: status.NOT_FOUND,
+      });
     }
 
     const coincidenceTokens = await bcrypt.compareSync(
@@ -167,7 +186,10 @@ export class AuthService implements OnModuleInit {
     );
 
     if (!coincidenceTokens) {
-      throw new RpcException('Refresh token invalid');
+      throw new RpcException({
+        message: 'Refresh token invalid',
+        code: status.UNAUTHENTICATED,
+      });
     }
 
     const updatedToken = await this.jwtService.signAsync(
@@ -207,7 +229,10 @@ export class AuthService implements OnModuleInit {
     const user = await lastValueFrom(this.svc.findOne({ email }));
 
     if (!user) {
-      throw new RpcException('Email not found');
+      throw new RpcException({
+        message: 'Email not found',
+        code: status.NOT_FOUND,
+      });
     }
 
     const tokenRecovery = await this.jwtService.signAsync(
@@ -242,9 +267,10 @@ export class AuthService implements OnModuleInit {
         html: `<div> Доброго дня, ${user.data.username}.</div> <div>Для восстановления пароля пройдите пожалуйста по <a href = "${url}">ссылке</a></div>`,
       })
       .catch((exception) => {
-        throw new RpcException(
-          `Ошибка работы почты: ${JSON.stringify(exception)}`,
-        );
+        throw new RpcException({
+          message: `Ошибка работы почты: ${JSON.stringify(exception)}`,
+          code: status.INTERNAL,
+        });
       });
 
     return {};
@@ -261,7 +287,10 @@ export class AuthService implements OnModuleInit {
     );
 
     if (!user) {
-      throw new RpcException('User not found');
+      throw new RpcException({
+        message: 'User not found',
+        code: status.NOT_FOUND,
+      });
     }
 
     const coincidenceTokens = bcrypt.compareSync(
@@ -270,7 +299,10 @@ export class AuthService implements OnModuleInit {
     );
 
     if (!coincidenceTokens) {
-      throw new RpcException('Recovery token invalid');
+      throw new RpcException({
+        message: 'Recovery token invalid',
+        code: status.UNAUTHENTICATED,
+      });
     }
 
     const salt = await bcrypt.genSalt(5);

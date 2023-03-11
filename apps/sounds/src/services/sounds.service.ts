@@ -10,6 +10,7 @@ import { RpcException } from '@nestjs/microservices';
 import { PageOptionsDto } from '@beherit/common/pagination/dto/PageOptionsDto';
 import { PageDto } from '@beherit/common/pagination/dto/PageDto';
 import { PageMetaDto } from '@beherit/common/pagination/dto/PageMetaDto';
+import { status } from '@grpc/grpc-js';
 
 @Injectable()
 export class SoundsService implements OnModuleInit {
@@ -21,13 +22,20 @@ export class SoundsService implements OnModuleInit {
 
   //----------------------------------------------------------------
   async findOne(soundId: string): Promise<Sound | undefined> {
-    const sound = this.soundRepository.findOne({ where: { id: soundId } });
+    try {
+      const sound = this.soundRepository.findOne({ where: { id: soundId } });
 
-    if (!sound) {
-      return undefined;
+      if (!sound) {
+        return undefined;
+      }
+
+      return sound;
+    } catch (exception) {
+      throw new RpcException({
+        message: 'DB read error',
+        code: status.INTERNAL,
+      });
     }
-
-    return sound;
   }
 
   //----------------------------------------------------------------
@@ -35,20 +43,27 @@ export class SoundsService implements OnModuleInit {
     pageOptionsDto: PageOptionsDto,
     userId: string,
   ): Promise<PageDto<Sound>> {
-    const queryBuilder = this.soundRepository.createQueryBuilder('sound');
+    try {
+      const queryBuilder = this.soundRepository.createQueryBuilder('sound');
 
-    queryBuilder
-      .where('sound.userId = :userId', { userId: userId })
-      .orderBy('sound.createdAt', pageOptionsDto.order)
-      .skip(pageOptionsDto.skip)
-      .take(pageOptionsDto.take);
+      queryBuilder
+        .where('sound.userId = :userId', { userId: userId })
+        .orderBy('sound.createdAt', pageOptionsDto.order)
+        .skip(pageOptionsDto.skip)
+        .take(pageOptionsDto.take);
 
-    const itemCount = await queryBuilder.getCount();
-    const { entities } = await queryBuilder.getRawAndEntities();
+      const itemCount = await queryBuilder.getCount();
+      const { entities } = await queryBuilder.getRawAndEntities();
 
-    const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
+      const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
 
-    return new PageDto(entities, pageMetaDto);
+      return new PageDto(entities, pageMetaDto);
+    } catch (exception) {
+      throw new RpcException({
+        message: 'DB read error',
+        code: status.INTERNAL,
+      });
+    }
   }
 
   //----------------------------------------------------------------
@@ -69,7 +84,10 @@ export class SoundsService implements OnModuleInit {
     try {
       this.soundRepository.save(soundStorageInDB);
     } catch (exception) {
-      throw new RpcException('Failed to added sound to DB');
+      throw new RpcException({
+        message: 'Failed to added sound to DB',
+        code: status.INTERNAL,
+      });
     }
     return {};
   }

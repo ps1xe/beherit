@@ -18,6 +18,7 @@ import {
   SoundsServiceClient,
   SOUNDS_SERVICE_NAME,
 } from '@beherit/grpc/protobufs/sounds.pb';
+import { status } from '@grpc/grpc-js';
 
 @Injectable()
 export class UsersService implements OnModuleInit {
@@ -48,7 +49,10 @@ export class UsersService implements OnModuleInit {
 
       return user;
     } catch (exception) {
-      throw new RpcException('DB write error');
+      throw new RpcException({
+        message: 'DB read error',
+        code: status.INTERNAL,
+      });
     }
   }
 
@@ -57,7 +61,10 @@ export class UsersService implements OnModuleInit {
     try {
       return this.userRepository.save(user);
     } catch (exception) {
-      throw new RpcException('DB write error');
+      throw new RpcException({
+        message: 'DB write error',
+        code: status.INTERNAL,
+      });
     }
   }
 
@@ -68,7 +75,10 @@ export class UsersService implements OnModuleInit {
     const sound = await lastValueFrom(this.svc.findOne({ soundId }));
 
     if (!sound.data) {
-      throw new RpcException('Sound not found');
+      throw new RpcException({
+        message: 'Sound not found',
+        code: status.NOT_FOUND,
+      });
     }
 
     const paramsForUrl = {
@@ -131,7 +141,10 @@ export class UsersService implements OnModuleInit {
     try {
       this.userRepository.save(avatarStorageInDB);
     } catch (exception) {
-      throw new RpcException(`Failed to update user: ${exception}`);
+      throw new RpcException({
+        message: `Failed to update user: ${exception}`,
+        code: status.INTERNAL,
+      });
     }
     return {};
   }
@@ -149,7 +162,10 @@ export class UsersService implements OnModuleInit {
     });
 
     if (!user) {
-      throw new RpcException('User not found');
+      throw new RpcException({
+        message: 'User not found',
+        code: status.NOT_FOUND,
+      });
     }
 
     const isPasswordValid = await bcrypt.compareSync(
@@ -158,7 +174,10 @@ export class UsersService implements OnModuleInit {
     );
 
     if (!isPasswordValid) {
-      throw new RpcException('Password wrong');
+      throw new RpcException({
+        message: 'Password wrong',
+        code: status.UNAUTHENTICATED,
+      });
     }
 
     const salt = await bcrypt.genSalt(5);
@@ -172,7 +191,10 @@ export class UsersService implements OnModuleInit {
     try {
       this.userRepository.save(updateUserPasswordObject);
     } catch (exception) {
-      throw new RpcException(`Failed to update user: ${exception}`);
+      throw new RpcException({
+        message: `Failed to update user: ${exception}`,
+        code: status.INTERNAL,
+      });
     }
 
     return {};

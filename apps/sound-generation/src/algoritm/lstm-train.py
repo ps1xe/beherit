@@ -42,7 +42,7 @@ def get_notes():
                 notes.append('.'.join(str(n) for n in element.normalOrder))
             # elif isinstance(element, percussion.PercussionChord):
 
-    with open('data/generated/notes/test/notes', 'wb') as filepath:
+    with open('generated/notes/test/notes', 'wb') as filepath:
         #записываем данные midi в файл notes
         pickle.dump(notes, filepath)
 
@@ -121,7 +121,7 @@ def create_network(network_input, n_vocab):
 #обучение нейронной сети
 def train(model, network_input, network_output):
     
-    filepath = "data/weights/test/weights-{epoch:02d}-{loss:.4f}-bigger.hdf5"
+    filepath = "generated/weights/test/weights-{epoch:02d}-{loss:.4f}-bigger.hdf5"
 
     #для сохранения модели наилучшего качества в процессе обучения по пути filepath, по метрике loss(минимальное число потерь)
     checkpoint = ModelCheckpoint(

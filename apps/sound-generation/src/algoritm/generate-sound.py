@@ -61,7 +61,7 @@ def create_network(network_input, n_vocab):
     model.add(Activation('softmax'))
     model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
 
-    model.load_weights('weights.hdf5')
+    model.load_weights('generated/weights/test/weights-04-4.6489-bigger.hdf5')
 
     return model
 
@@ -150,12 +150,12 @@ def create_midi(prediction_output):
     midi_stream = stream.Stream(output_notes)
 
     #запись в midi
-    midi_stream.write('midi', fp='data/generated/midi/test/test_output.mid')
+    midi_stream.write('midi', fp='generated/midi/test/test_output.mid')
 
 #----------------------------------------------------------------------------------------------------------------------
 #собираем все методы
 def generate():
-    with open('data/generated/notes/test/notes', 'rb') as filepath:
+    with open('generated/notes/test/notes', 'rb') as filepath:
         notes = pickle.load(filepath)
 
     pitchnames = sorted(set(item for item in notes))
