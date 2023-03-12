@@ -39,6 +39,7 @@ export class AuthController {
     return {
       token: registerResponse.token,
       refreshToken: registerResponse.refreshToken,
+      userInfo: registerResponse.userInfo,
     };
   }
 
@@ -48,6 +49,7 @@ export class AuthController {
     return {
       token: loginResponse.token,
       refreshToken: loginResponse.refreshToken,
+      userInfo: loginResponse.userInfo,
     };
   }
 
@@ -67,6 +69,7 @@ export class AuthController {
     return {
       token: updateTokensResponse.token,
       refreshToken: updateTokensResponse.refreshToken,
+      userInfo: updateTokensResponse.userInfo,
     };
   }
 

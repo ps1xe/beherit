@@ -43,6 +43,14 @@ export interface FindOneResponse {
   data?: User | undefined;
 }
 
+export interface GetAvatarRequset {
+  email: string;
+}
+
+export interface GetAvatarResponse {
+  url: string;
+}
+
 export interface Void {
 }
 
@@ -95,6 +103,8 @@ export interface UserServiceClient {
   findOne(request: FindOneRequest): Observable<FindOneResponse>;
 
   save(request: PartialUser): Observable<User>;
+
+  getAvatar(request: GetAvatarRequset): Observable<GetAvatarResponse>;
 }
 
 export interface UserServiceController {
@@ -113,6 +123,8 @@ export interface UserServiceController {
   findOne(request: FindOneRequest): Promise<FindOneResponse> | Observable<FindOneResponse> | FindOneResponse;
 
   save(request: PartialUser): Promise<User> | Observable<User> | User;
+
+  getAvatar(request: GetAvatarRequset): Promise<GetAvatarResponse> | Observable<GetAvatarResponse> | GetAvatarResponse;
 }
 
 export function UserServiceControllerMethods() {
@@ -124,6 +136,7 @@ export function UserServiceControllerMethods() {
       "changePassword",
       "findOne",
       "save",
+      "getAvatar",
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);

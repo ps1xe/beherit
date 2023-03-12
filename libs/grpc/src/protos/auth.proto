@@ -22,7 +22,9 @@ message RegisterRequest {
 message RegisterResponse {
   string refreshToken = 1;
   string token = 2;
+  UserInfo userInfo = 3;
 }
+
 
 // Login
 
@@ -34,6 +36,7 @@ message LoginRequest {
 message LoginResponse {
   string refreshToken = 1;
   string token = 2;
+  UserInfo userInfo = 3;
 }
 
 // Validate
@@ -55,6 +58,7 @@ message UpdateTokensRequest{
 message UpdateTokensResponse{
   string refreshToken = 1;
   string token = 2;
+  UserInfo userInfo = 3;
 }
 
 //GetLinkToResetPassword
@@ -71,6 +75,13 @@ message ResetPasswordRequest{
 
 }
 
-//CommonMassage
+//CommonMessage
 
 message Void{}
+
+
+message UserInfo{
+  string email = 1;
+  string username = 2;
+  string avatar = 3;
+}

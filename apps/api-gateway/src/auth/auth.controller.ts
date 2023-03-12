@@ -40,32 +40,39 @@ export class AuthController implements OnModuleInit {
   async register(
     @Body() registerRequestBody: RegisterRequest,
     @Res({ passthrough: true }) response: Response,
-  ): Promise<void> {
-    const tokens = await lastValueFrom(this.svc.register(registerRequestBody));
-    response.cookie('refreshToken', tokens.refreshToken);
-    response.cookie('token', tokens.token);
+  ): Promise<any> {
+    const authenticationInformation = await lastValueFrom(
+      this.svc.register(registerRequestBody),
+    );
+    response.cookie('refreshToken', authenticationInformation.refreshToken);
+    response.cookie('token', authenticationInformation.token);
+    return authenticationInformation.userInfo;
   }
 
   @Put('login')
   async login(
     @Body() loginRequestBody: LoginRequest,
     @Res({ passthrough: true }) response: Response,
-  ): Promise<void> {
-    const tokens = await lastValueFrom(this.svc.login(loginRequestBody));
-    response.cookie('refreshToken', tokens.refreshToken);
-    response.cookie('token', tokens.token);
+  ): Promise<any> {
+    const authenticationInformation = await lastValueFrom(
+      this.svc.login(loginRequestBody),
+    );
+    response.cookie('refreshToken', authenticationInformation.refreshToken);
+    response.cookie('token', authenticationInformation.token);
+    return authenticationInformation.userInfo;
   }
 
   @Post('updateTokens')
   async updateTokens(
     @Req() request: Request,
     @Res({ passthrough: true }) response: Response,
-  ): Promise<void> {
-    const tokens = await lastValueFrom(
+  ): Promise<any> {
+    const authenticationInformation = await lastValueFrom(
       this.svc.updateTokens({ refreshToken: request.cookies.refreshToken }),
     );
-    response.cookie('refreshToken', tokens.refreshToken);
-    response.cookie('token', tokens.token);
+    response.cookie('refreshToken', authenticationInformation.refreshToken);
+    response.cookie('token', authenticationInformation.token);
+    return authenticationInformation.userInfo;
   }
 
   @Post('getLinkToResetPassword')

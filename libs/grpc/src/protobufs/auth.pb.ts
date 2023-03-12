@@ -13,6 +13,7 @@ export interface RegisterRequest {
 export interface RegisterResponse {
   refreshToken: string;
   token: string;
+  userInfo: UserInfo | undefined;
 }
 
 export interface LoginRequest {
@@ -23,6 +24,7 @@ export interface LoginRequest {
 export interface LoginResponse {
   refreshToken: string;
   token: string;
+  userInfo: UserInfo | undefined;
 }
 
 export interface ValidateRequest {
@@ -40,6 +42,7 @@ export interface UpdateTokensRequest {
 export interface UpdateTokensResponse {
   refreshToken: string;
   token: string;
+  userInfo: UserInfo | undefined;
 }
 
 export interface GetLinkToResetPasswordRequest {
@@ -53,6 +56,12 @@ export interface ResetPasswordRequest {
 }
 
 export interface Void {
+}
+
+export interface UserInfo {
+  email: string;
+  username: string;
+  avatar: string;
 }
 
 export const AUTH_PACKAGE_NAME = "auth";

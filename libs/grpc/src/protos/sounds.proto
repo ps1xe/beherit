@@ -5,6 +5,7 @@ package sounds;
 service SoundsService{
     rpc FindOne (FindOneRequest) returns (FindOneResponse) {}
     rpc Find (FindRequest) returns (FindResponse) {}
+    rpc Save (SaveRequest) returns (SaveResponse) {}
 }
 
 
@@ -16,6 +17,21 @@ message FindOneRequest{
 
 message FindOneResponse{
     optional Sound data = 1;
+}
+
+
+//Save
+
+message SaveRequest{
+    string key = 1; 
+    string genre = 2;
+    string userId = 3;
+    int32 length= 4;
+}
+
+
+message SaveResponse{
+    Sound data = 1;
 }
 
 //Find
@@ -30,7 +46,7 @@ message FindResponse{
     PageMeta meta = 2;
 }
 
-//Common massages
+//Common messages
 
 message Void{}
 
@@ -40,6 +56,8 @@ message Sound{
     string id = 1;
     string key = 2;
     string userId = 3;
+    string genre = 4;
+    int32 length = 5;
 }
 
 // Dto

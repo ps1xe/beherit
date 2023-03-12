@@ -1,7 +1,22 @@
 syntax = "proto3";
 
-package sound_generation;
+package ml;
 
-service SoundGenerationService{
-    
+service MlService{
+    rpc Generate (GenerateRequest) returns (GenerateResponse) {}
 }
+
+//Generate
+message GenerateRequest{
+    string genre = 1; 
+    int32 length = 2;
+    string userId = 3;
+}
+
+message GenerateResponse{
+    string url = 1;
+}
+
+
+//Common message
+message Void{}

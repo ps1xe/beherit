@@ -7,6 +7,10 @@ import { PageOptionsDto } from '@beherit/common/pagination/dto/PageOptionsDto';
 import { PageDto } from '@beherit/common/pagination/dto/PageDto';
 import { PageMetaDto } from '@beherit/common/pagination/dto/PageMetaDto';
 import { status } from '@grpc/grpc-js';
+import {
+  FindOneResponse,
+  SaveResponse,
+} from '@beherit/grpc/protobufs/sounds.pb';
 
 @Injectable()
 export class SoundsService implements OnModuleInit {
@@ -17,15 +21,17 @@ export class SoundsService implements OnModuleInit {
   }
 
   //----------------------------------------------------------------
-  async findOne(soundId: string): Promise<Sound | undefined> {
+  async findOne(soundId: string): Promise<FindOneResponse> {
     try {
-      const sound = this.soundRepository.findOne({ where: { id: soundId } });
+      const sound = await this.soundRepository.findOne({
+        where: { id: soundId },
+      });
 
       if (!sound) {
         return undefined;
       }
 
-      return sound;
+      return { data: sound };
     } catch (exception) {
       throw new RpcException({
         message: 'DB read error',
@@ -57,6 +63,32 @@ export class SoundsService implements OnModuleInit {
     } catch (exception) {
       throw new RpcException({
         message: 'DB read error',
+        code: status.INTERNAL,
+      });
+    }
+  }
+
+  async save(
+    key: string,
+    userId: string,
+    genre: string,
+    length: number,
+  ): Promise<SaveResponse> {
+    try {
+      const newSound = {
+        key: key,
+        userId: userId,
+        genre: genre,
+        length: length,
+      } as Sound;
+
+      const sound = await this.soundRepository.save(newSound);
+
+      return { data: sound };
+    } catch (exception) {
+      console.log(exception);
+      throw new RpcException({
+        message: 'DB write error',
         code: status.INTERNAL,
       });
     }

@@ -19,6 +19,7 @@ import {
   SOUNDS_SERVICE_NAME,
 } from '@beherit/grpc/protobufs/sounds.pb';
 import { status } from '@grpc/grpc-js';
+import { GetAvatarResponseDto } from '../dto/get-avatar-response.dto.js';
 
 @Injectable()
 export class UsersService implements OnModuleInit {
@@ -81,10 +82,13 @@ export class UsersService implements OnModuleInit {
       });
     }
 
+    const key = sound.data.key;
+    console.log(`;${key};`);
+
     const paramsForUrl = {
       Bucket: config.S3_BUCKET_NAME_SOUNDS,
       Expires: 5000,
-      Key: sound.data.key,
+      Key: key,
     };
 
     const url = await s3.getSignedUrlPromise('getObject', paramsForUrl);
@@ -198,5 +202,19 @@ export class UsersService implements OnModuleInit {
     }
 
     return {};
+  }
+
+  async getAvatar(email: string): Promise<GetAvatarResponseDto> {
+    const user = await this.userRepository.findOne({ where: { email: email } });
+
+    const paramsForUrl = {
+      Bucket: config.S3_BUCKET_NAME_AVATAR,
+      Expires: 5000,
+      Key: user.avatar,
+    };
+
+    const url = await s3.getSignedUrlPromise('getObject', paramsForUrl);
+
+    return { url };
   }
 }

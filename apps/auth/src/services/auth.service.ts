@@ -81,7 +81,15 @@ export class AuthService implements OnModuleInit {
 
     lastValueFrom(this.svc.save(newUser));
 
-    return { token: token, refreshToken: refreshToken };
+    const avatar = await lastValueFrom(this.svc.getAvatar({ email }));
+
+    const userInfo = {
+      email: email,
+      username: username,
+      avatar: avatar.url,
+    };
+
+    return { token: token, refreshToken: refreshToken, userInfo: userInfo };
   }
 
   //----------------------------------------------------------------
@@ -132,9 +140,18 @@ export class AuthService implements OnModuleInit {
       }),
     );
 
+    const avatar = await lastValueFrom(this.svc.getAvatar({ email }));
+
+    const userInfo = {
+      email: email,
+      username: user.data.username,
+      avatar: avatar.url,
+    };
+
     return {
       token: token,
       refreshToken: refreshToken,
+      userInfo: userInfo,
     };
   }
 
@@ -221,7 +238,20 @@ export class AuthService implements OnModuleInit {
       }),
     );
 
-    return { token: updatedToken, refreshToken: updatedRefreshToken };
+    const email = user.data.email;
+    const avatar = await lastValueFrom(this.svc.getAvatar({ email }));
+
+    const userInfo = {
+      email: user.data.email,
+      username: user.data.username,
+      avatar: avatar.url,
+    };
+
+    return {
+      token: updatedToken,
+      refreshToken: updatedRefreshToken,
+      userInfo: userInfo,
+    };
   }
 
   //----------------------------------------------------------------

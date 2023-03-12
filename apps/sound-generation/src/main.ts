@@ -1,13 +1,13 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import { SoundGenerationModule } from './ml.module';
-import { SOUND_GENERATION_PACKAGE_NAME } from '@beherit/grpc/protobufs/sound-generation.pb';
+import { MlModule } from './ml.module.js';
+import { ML_PACKAGE_NAME } from '@beherit/grpc/protobufs/sound-generation.pb';
 
 const microserviceOptions = {
   transport: Transport.GRPC,
   options: {
-    package: SOUND_GENERATION_PACKAGE_NAME,
+    package: ML_PACKAGE_NAME,
     channelOptions: {
       'grpc.max_receive_message_length': 1024 * 1024 * 1024 * 50,
     },
@@ -18,7 +18,7 @@ const microserviceOptions = {
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice(
-    SoundGenerationModule,
+    MlModule,
     microserviceOptions,
   );
 

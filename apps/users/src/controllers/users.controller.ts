@@ -9,7 +9,9 @@ import { Controller, UseFilters } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { ChangePasswordRequestDto } from '../dto/change-password-request.dto.js';
 import { ChangingAvatarRequestDto } from '../dto/changing-avatar-request.dto.js';
-import { findOneDto } from '../dto/find-one.dto.js';
+import { FindOneDto } from '../dto/find-one.dto.js';
+import { GetAvatarRequestDto } from '../dto/get-avatar-request.dto.js';
+import { GetAvatarResponseDto } from '../dto/get-avatar-response.dto.js';
 import { GetListSoundsRequsetDto } from '../dto/get-list-sounds-request.dto.js';
 import { GetListSoundsResponseDto } from '../dto/get-list-sounds-response.dto.js';
 import { GetUrlToDownloadRequestDto } from '../dto/get-url-request.dto.js';
@@ -60,7 +62,7 @@ export class UsersController {
   }
 
   @GrpcMethod(USER_SERVICE_NAME, 'FindOne')
-  async findOne({ email }: findOneDto): Promise<FindOneResponse> {
+  async findOne({ email }: FindOneDto): Promise<FindOneResponse> {
     const user = await this.userService.findOne(email);
     return { data: user };
   }
@@ -68,5 +70,12 @@ export class UsersController {
   @GrpcMethod(USER_SERVICE_NAME, 'Save')
   async save(user: PartialUser): Promise<User> {
     return this.userService.save(user);
+  }
+
+  @GrpcMethod(USER_SERVICE_NAME, 'GetAvatar')
+  async getAvatar({
+    email,
+  }: GetAvatarRequestDto): Promise<GetAvatarResponseDto> {
+    return this.userService.getAvatar(email);
   }
 }

@@ -1,29 +1,47 @@
 /* eslint-disable */
 import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
+import { Observable } from "rxjs";
 
-export const protobufPackage = "sound_generation";
+export const protobufPackage = "ml";
 
-export const SOUND_GENERATION_PACKAGE_NAME = "sound_generation";
-
-export interface SoundGenerationServiceClient {
+/** Generate */
+export interface GenerateRequest {
+  genre: string;
+  length: number;
+  userId: string;
 }
 
-export interface SoundGenerationServiceController {
+export interface GenerateResponse {
+  url: string;
 }
 
-export function SoundGenerationServiceControllerMethods() {
+/** Common message */
+export interface Void {
+}
+
+export const ML_PACKAGE_NAME = "ml";
+
+export interface MlServiceClient {
+  generate(request: GenerateRequest): Observable<GenerateResponse>;
+}
+
+export interface MlServiceController {
+  generate(request: GenerateRequest): Promise<GenerateResponse> | Observable<GenerateResponse> | GenerateResponse;
+}
+
+export function MlServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = [];
+    const grpcMethods: string[] = ["generate"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcMethod("SoundGenerationService", method)(constructor.prototype[method], method, descriptor);
+      GrpcMethod("MlService", method)(constructor.prototype[method], method, descriptor);
     }
     const grpcStreamMethods: string[] = [];
     for (const method of grpcStreamMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcStreamMethod("SoundGenerationService", method)(constructor.prototype[method], method, descriptor);
+      GrpcStreamMethod("MlService", method)(constructor.prototype[method], method, descriptor);
     }
   };
 }
 
-export const SOUND_GENERATION_SERVICE_NAME = "SoundGenerationService";
+export const ML_SERVICE_NAME = "MlService";

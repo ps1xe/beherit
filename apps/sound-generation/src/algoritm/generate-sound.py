@@ -11,6 +11,7 @@ import boto3
 import uuid
 import os
 from dotenv import load_dotenv
+import sys
 
 load_dotenv()
 #----------------------------------------------------------------------------------------------------------------------
@@ -46,7 +47,7 @@ def prepare_sequences(notes, pitchnames, n_vocab):
 
 #----------------------------------------------------------------------------------------------------------------------
 #создает lstm для генерации
-def create_network(network_input, n_vocab):
+def create_network(network_input, n_vocab, genre = 'Rock'):
     model = Sequential()
     model.add(LSTM(
         512,
@@ -66,13 +67,16 @@ def create_network(network_input, n_vocab):
     model.add(Activation('softmax'))
     model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
 
-    model.load_weights('generated/weights/test/weights-04-4.6489-bigger.hdf5')
+    if(genre == 'Rock'):
+        model.load_weights('src/algoritm/generated/weights/test/weights-04-4.6489-bigger.hdf5')
+    else:
+        model.load_weights('src/algoritm/generated/weights/test/weights-04-4.6489-bigger.hdf5')
 
     return model
 
 #----------------------------------------------------------------------------------------------------------------------
 #генерирует новую музыку используя обученную модель
-def generate_notes(model, network_input, pitchnames, n_vocab):
+def generate_notes(model, network_input, length, pitchnames, n_vocab):
 
     #случайное число для выбора последовательности
     start = numpy.random.randint(0, len(network_input)-1)
@@ -87,7 +91,7 @@ def generate_notes(model, network_input, pitchnames, n_vocab):
     prediction_output = []
 
     # Генерирует 500 нот
-    for note_index in range(500):
+    for note_index in range(length):
 
         #prediction_input преобразуется в формат, совместимый с LSTM слоями, с помощью функции numpy.reshape()
         prediction_input = numpy.reshape(pattern, (1, len(pattern), 1))
@@ -153,9 +157,9 @@ def create_midi(prediction_output):
         offset += 0.5
 
     midi_stream = stream.Stream(output_notes)
-    midi_stream.write('midi', fp='generated/tmp/generated-output.mid')
+    midi_stream.write('midi', fp='src/algoritm/generated/tmp/generated-output.mid')
 
-    with open('generated/tmp/generated-output.mid', 'rb') as f:
+    with open('src/algoritm/generated/tmp/generated-output.mid', 'rb') as f:
         return f.read()
 
 
@@ -176,25 +180,27 @@ def save_in_s3(buffer):
     endpoint_url= endpoint_url,
 )
     
-    key = str(uuid.uuid4()) + '.midi'
+    key = str(uuid.uuid4()) + '.mid'
     s3.put_object(Bucket=bucket, Key=key, Body=buffer)
-    os.remove('generated/tmp/generated-output.mid')
+
+    print(key) 
 
 #----------------------------------------------------------------------------------------------------------------------
 #собираем все методы
-def generate():
-    with open('generated/notes/test/notes', 'rb') as filepath:
+def generate(genre, length = 500):
+    with open('src/algoritm/generated/notes/test/notes', 'rb') as filepath:
         notes = pickle.load(filepath)
 
     pitchnames = sorted(set(item for item in notes))
     n_vocab = len(set(notes))
 
     network_input, normalized_input = prepare_sequences(notes, pitchnames, n_vocab)
-    model = create_network(normalized_input, n_vocab)
-    prediction_output = generate_notes(model, network_input, pitchnames, n_vocab)
+    model = create_network(normalized_input, n_vocab, genre)
+    prediction_output = generate_notes(model, network_input, length, pitchnames, n_vocab)
     midi = create_midi(prediction_output)
-    save_in_s3(midi)
+    return save_in_s3(midi)
     
 
+
 if __name__ == '__main__':
-    generate()
+    generate(sys.argv[1], int(sys.argv[2]))
