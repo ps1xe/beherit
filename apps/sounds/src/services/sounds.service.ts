@@ -69,6 +69,7 @@ export class SoundsService implements OnModuleInit {
   }
 
   async save(
+    name: string,
     key: string,
     userId: string,
     genre: string,
@@ -76,6 +77,7 @@ export class SoundsService implements OnModuleInit {
   ): Promise<SaveResponse> {
     try {
       const newSound = {
+        name: name,
         key: key,
         userId: userId,
         genre: genre,

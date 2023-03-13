@@ -8,9 +8,10 @@ service MlService{
 
 //Generate
 message GenerateRequest{
-    string genre = 1; 
-    int32 length = 2;
-    string userId = 3;
+    string name = 1;
+    string genre = 2; 
+    int32 length = 3;
+    string userId = 4;
 }
 
 message GenerateResponse{

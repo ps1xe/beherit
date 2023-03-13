@@ -5,6 +5,10 @@ import { IsNumber, IsString, IsUUID } from 'class-validator';
 export class SaveDto implements SaveRequest {
   @Type(() => String)
   @IsString()
+  readonly name: string;
+
+  @Type(() => String)
+  @IsString()
   readonly key: string;
 
   @Type(() => String)

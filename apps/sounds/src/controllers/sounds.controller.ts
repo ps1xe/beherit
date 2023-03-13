@@ -36,11 +36,12 @@ export class SoundsController {
 
   @GrpcMethod(SOUNDS_SERVICE_NAME, 'Save')
   async save({
+    name,
     key,
     userId,
     genre,
     length,
   }: SaveDto): Promise<SaveResponseDto> {
-    return this.soundsService.save(key, userId, genre, length);
+    return this.soundsService.save(name, key, userId, genre, length);
   }
 }

@@ -6,6 +6,7 @@ export const protobufPackage = "ml";
 
 /** Generate */
 export interface GenerateRequest {
+  name: string;
   genre: string;
   length: number;
   userId: string;

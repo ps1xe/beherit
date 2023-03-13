@@ -17,10 +17,11 @@ export class MlController {
 
   @GrpcMethod(ML_SERVICE_NAME, 'Generate')
   async generate({
+    name,
     genre,
     length,
     userId,
   }: GenerateDto): Promise<GenerateResponse> {
-    return this.mlService.generate(genre, length, userId);
+    return this.mlService.generate(name, genre, length, userId);
   }
 }

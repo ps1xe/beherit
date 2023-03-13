@@ -13,6 +13,7 @@ export interface FindOneResponse {
 }
 
 export interface SaveRequest {
+  name: string;
   key: string;
   genre: string;
   userId: string;
@@ -38,6 +39,7 @@ export interface Void {
 
 export interface Sound {
   id: string;
+  name: string;
   key: string;
   userId: string;
   genre: string;

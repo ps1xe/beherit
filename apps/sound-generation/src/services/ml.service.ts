@@ -34,6 +34,7 @@ export class MlService implements OnModuleInit {
   }
 
   async generate(
+    name: string,
     genre: string,
     length: number,
     userId: string,
@@ -46,6 +47,7 @@ export class MlService implements OnModuleInit {
       this.svcSounds.save({
         key: key.toString().trim(),
         genre: genre,
+        name: name,
         length: length,
         userId: userId,
       }),

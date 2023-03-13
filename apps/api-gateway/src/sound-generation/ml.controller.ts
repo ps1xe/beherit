@@ -40,6 +40,7 @@ export class MlController implements OnModuleInit {
     const { userId } = await this.authService.validate(token);
 
     return this.svc.generate({
+      name: generateBody.name,
       genre: generateBody.genre,
       length: generateBody.length,
       userId: userId,

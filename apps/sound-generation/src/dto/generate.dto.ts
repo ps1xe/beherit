@@ -5,6 +5,10 @@ import { IsNumber, IsString, IsUUID } from 'class-validator';
 export class GenerateDto implements GenerateRequest {
   @Type(() => String)
   @IsString()
+  name: string;
+
+  @Type(() => String)
+  @IsString()
   genre: string;
 
   @Type(() => Number)

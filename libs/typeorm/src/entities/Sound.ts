@@ -13,13 +13,16 @@ export class Sound extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
+  @Column({ name: 'name' })
+  name!: string;
+
   @Column({ name: 'key' })
   key!: string;
 
   @Column({ name: 'genre' })
   genre!: string;
 
-  @Column({ name: ' length' })
+  @Column({ name: 'length' })
   length: number;
 
   @Column()
