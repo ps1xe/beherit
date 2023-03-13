@@ -1,6 +1,6 @@
 import pickle
 import numpy
-from music21 import instrument, note, stream, chord
+from music21 import instrument, note, stream, chord, duration
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import Dropout
@@ -47,7 +47,7 @@ def prepare_sequences(notes, pitchnames, n_vocab):
 
 #----------------------------------------------------------------------------------------------------------------------
 #создает lstm для генерации
-def create_network(network_input, n_vocab, genre = 'Rock'):
+def create_network(network_input, n_vocab, genre = 'rock'):
     model = Sequential()
     model.add(LSTM(
         512,
@@ -55,7 +55,7 @@ def create_network(network_input, n_vocab, genre = 'Rock'):
         recurrent_dropout=0.3,
         return_sequences=True
     ))
-    model.add(LSTM(512, return_sequences=True, recurrent_dropout=0.3,))
+    model.add(LSTM(512, return_sequences=True, recurrent_dropout=0.3))
     model.add(LSTM(512))
     model.add(BatchNorm())
     model.add(Dropout(0.3))
@@ -67,10 +67,10 @@ def create_network(network_input, n_vocab, genre = 'Rock'):
     model.add(Activation('softmax'))
     model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
 
-    if(genre == 'Rock'):
-        model.load_weights('src/algoritm/generated/weights/test/weights-04-4.6489-bigger.hdf5')
+    if(genre == 'rock'):
+        model.load_weights('src/algoritm/generated/weights/test/weights-01-7.2943-bigger.hdf5')
     else:
-        model.load_weights('src/algoritm/generated/weights/test/weights-04-4.6489-bigger.hdf5')
+        model.load_weights('src/algoritm/generated/weights/test/weights-01-7.2943-bigger.hdf5')
 
     return model
 
@@ -122,20 +122,20 @@ def generate_notes(model, network_input, length, pitchnames, n_vocab):
 #----------------------------------------------------------------------------------------------------------------------
 #из списка нот(или аккордов) преобразует в midi
 def create_midi(prediction_output):
-    #растояние воспроизведения ноты от начала
-    offset = 0
 
     output_notes = []
 
     #проходим по prediction_output перебирая ноты или аккорды
     for pattern in prediction_output:
         #если pattern содержит точку или состоит из чисел, то это аккорд
-        if ('.' in pattern) or pattern.isdigit():
+        if (',' in pattern):
             #разделяем ноты аккорда по точке
-            notes_in_chord = pattern.split('.')
+            notes_in_chord = pattern.split(';')[0].split(',')
+          
+            offset_and_duration = pattern.split(';')
             notes = []
             #проходим по нотам аккорда преобразовывая в объект Chord
-            for current_note in notes_in_chord:
+            for current_note in notes_in_chord[:-1]:
                 #получение из числа ноты
                 new_note = note.Note(int(current_note))
                 new_note.storedInstrument = instrument.Piano()
@@ -144,17 +144,19 @@ def create_midi(prediction_output):
 
             #создаем аккорд из списка notes
             new_chord = chord.Chord(notes)
-            new_chord.offset = offset
+            new_chord.offset = float(offset_and_duration[1])
+            new_chord.duration = duration.Duration(float(offset_and_duration[2]))
 
             #добавляем в последовательность нот
             output_notes.append(new_chord)
         else:
-            new_note = note.Note(pattern)
-            new_note.offset = offset
+            note_parse = pattern.split(';')
+            new_note = note.Note(note_parse[0])
+            new_note.offset = float(note_parse[2])
+            new_note.duration = duration.Duration(float(note_parse[1]))
             new_note.storedInstrument = instrument.Piano()
             output_notes.append(new_note)
 
-        offset += 0.5
 
     midi_stream = stream.Stream(output_notes)
     midi_stream.write('midi', fp='src/algoritm/generated/tmp/generated-output.mid')
