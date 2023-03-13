@@ -44,8 +44,12 @@ export class AuthController implements OnModuleInit {
     const authenticationInformation = await lastValueFrom(
       this.svc.register(registerRequestBody),
     );
-    response.cookie('refreshToken', authenticationInformation.refreshToken);
-    response.cookie('token', authenticationInformation.token);
+    response.cookie('refreshToken', authenticationInformation.refreshToken, {
+      httpOnly: true,
+    });
+    response.cookie('token', authenticationInformation.token, {
+      httpOnly: true,
+    });
     return authenticationInformation.userInfo;
   }
 
@@ -57,8 +61,12 @@ export class AuthController implements OnModuleInit {
     const authenticationInformation = await lastValueFrom(
       this.svc.login(loginRequestBody),
     );
-    response.cookie('refreshToken', authenticationInformation.refreshToken);
-    response.cookie('token', authenticationInformation.token);
+    response.cookie('refreshToken', authenticationInformation.refreshToken, {
+      httpOnly: true,
+    });
+    response.cookie('token', authenticationInformation.token, {
+      httpOnly: true,
+    });
     return authenticationInformation.userInfo;
   }
 
@@ -70,8 +78,12 @@ export class AuthController implements OnModuleInit {
     const authenticationInformation = await lastValueFrom(
       this.svc.updateTokens({ refreshToken: request.cookies.refreshToken }),
     );
-    response.cookie('refreshToken', authenticationInformation.refreshToken);
-    response.cookie('token', authenticationInformation.token);
+    response.cookie('refreshToken', authenticationInformation.refreshToken, {
+      httpOnly: true,
+    });
+    response.cookie('token', authenticationInformation.token, {
+      httpOnly: true,
+    });
     return authenticationInformation.userInfo;
   }
 
