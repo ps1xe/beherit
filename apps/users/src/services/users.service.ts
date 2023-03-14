@@ -196,7 +196,7 @@ export class UsersService implements OnModuleInit {
     const encodeNewPassword = await bcrypt.hashSync(newPassword, salt);
 
     const updateUserPasswordObject = {
-      id: userId,
+      ...user,
       password: encodeNewPassword,
     };
 
