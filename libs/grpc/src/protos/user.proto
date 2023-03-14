@@ -5,7 +5,7 @@ package user;
 service UserService{
     rpc GetUrlToDownloadSound (GetUrlSoundRequest) returns (GetUrlSoundResponse) {}
     rpc GetListSounds (GetListSoundsRequest) returns (GetListSoundsResponse) {}
-    rpc ChangingAvatar (ChangingAvatarRequest) returns (Void) {}
+    rpc ChangingAvatar (ChangingAvatarRequest) returns (ChangingAvatarResponse) {}
     rpc ChangePassword (ChangePasswordRequest) returns (Void) {}
     rpc FindOne (FindOneRequest) returns (FindOneResponse) {}
     rpc Save (PartialUser) returns (User) {}
@@ -44,6 +44,9 @@ message ChangingAvatarRequest{
     string extension = 3;
 }
 
+message ChangingAvatarResponse {
+    string url = 1;
+}
 
 //ChangePassword
 

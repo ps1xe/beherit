@@ -4,7 +4,6 @@ import {
   Get,
   Inject,
   OnModuleInit,
-  Param,
   Post,
   Query,
   Req,
@@ -14,6 +13,7 @@ import {
 } from '@nestjs/common';
 import type { ClientGrpc } from '@nestjs/microservices';
 import {
+  ChangingAvatarResponse,
   GetListSoundsResponse,
   UserServiceClient,
   USER_SERVICE_NAME,
@@ -63,16 +63,19 @@ export class UsersController implements OnModuleInit {
   async changingAvatar(
     @UploadedFile() avatar: Express.Multer.File,
     @Req() request: Request,
-  ): Promise<Void> {
+  ): Promise<ChangingAvatarResponse> {
     const token = request.cookies.token;
     const { userId } = await this.authService.validate(token);
     const buffer = avatar.buffer;
     const extension = avatar.originalname.split('.').pop();
-    return this.svc.changingAvatar({
-      userId: userId,
-      avatar: buffer,
-      extension: extension,
-    });
+    const url = await lastValueFrom(
+      this.svc.changingAvatar({
+        userId: userId,
+        avatar: buffer,
+        extension: extension,
+      }),
+    );
+    return url;
   }
 
   @Post('changePassword')

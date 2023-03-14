@@ -9,6 +9,7 @@ import { Controller, UseFilters } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { ChangePasswordRequestDto } from '../dto/change-password-request.dto.js';
 import { ChangingAvatarRequestDto } from '../dto/changing-avatar-request.dto.js';
+import { ChangingAvatarResponseDto } from '../dto/changing-avatar-response.dto.js';
 import { FindOneDto } from '../dto/find-one.dto.js';
 import { GetAvatarRequestDto } from '../dto/get-avatar-request.dto.js';
 import { GetAvatarResponseDto } from '../dto/get-avatar-response.dto.js';
@@ -44,7 +45,7 @@ export class UsersController {
     userId,
     avatar,
     extension,
-  }: ChangingAvatarRequestDto): Promise<Void> {
+  }: ChangingAvatarRequestDto): Promise<ChangingAvatarResponseDto> {
     return this.userService.changingAvatar(userId, avatar, extension);
   }
 

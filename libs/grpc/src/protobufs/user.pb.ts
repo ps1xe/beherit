@@ -30,6 +30,10 @@ export interface ChangingAvatarRequest {
   extension: string;
 }
 
+export interface ChangingAvatarResponse {
+  url: string;
+}
+
 export interface ChangePasswordRequest {
   userId: string;
   currentPassword: string;
@@ -104,7 +108,7 @@ export interface UserServiceClient {
 
   getListSounds(request: GetListSoundsRequest): Observable<GetListSoundsResponse>;
 
-  changingAvatar(request: ChangingAvatarRequest): Observable<Void>;
+  changingAvatar(request: ChangingAvatarRequest): Observable<ChangingAvatarResponse>;
 
   changePassword(request: ChangePasswordRequest): Observable<Void>;
 
@@ -124,7 +128,9 @@ export interface UserServiceController {
     request: GetListSoundsRequest,
   ): Promise<GetListSoundsResponse> | Observable<GetListSoundsResponse> | GetListSoundsResponse;
 
-  changingAvatar(request: ChangingAvatarRequest): Promise<Void> | Observable<Void> | Void;
+  changingAvatar(
+    request: ChangingAvatarRequest,
+  ): Promise<ChangingAvatarResponse> | Observable<ChangingAvatarResponse> | ChangingAvatarResponse;
 
   changePassword(request: ChangePasswordRequest): Promise<Void> | Observable<Void> | Void;
 

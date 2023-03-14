@@ -19,6 +19,7 @@ import {
 } from '@beherit/grpc/protobufs/sounds.pb';
 import { status } from '@grpc/grpc-js';
 import { GetAvatarResponseDto } from '../dto/get-avatar-response.dto.js';
+import { ChangingAvatarResponseDto } from '../dto/changing-avatar-response.dto.js';
 
 @Injectable()
 export class UsersService implements OnModuleInit {
@@ -132,7 +133,9 @@ export class UsersService implements OnModuleInit {
     userId: string,
     avatar: Buffer,
     extension: string,
-  ): Promise<Void> {
+  ): Promise<ChangingAvatarResponseDto> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+
     const uploadResult = await s3
       .upload({
         Bucket: config.S3_BUCKET_NAME_AVATAR,
@@ -142,8 +145,8 @@ export class UsersService implements OnModuleInit {
       .promise();
 
     const avatarStorageInDB = {
+      ...user,
       avatar: uploadResult.Key,
-      userId: userId,
     };
 
     try {
@@ -154,7 +157,8 @@ export class UsersService implements OnModuleInit {
         code: status.INTERNAL,
       });
     }
-    return {};
+
+    return this.getAvatar(user.email);
   }
 
   //----------------------------------------------------------------
