@@ -38,14 +38,14 @@ def get_notes():
             if isinstance(element, note.Note):
                 duration = str(element.duration.quarterLength)
                 gap = str(element.offset)
-                transform_note = str(element.pitch) + ';'+ duration+';'+gap
+                transform_note = str(element.pitch)
                 notes.append(transform_note)
             #если элемент аккорд, то преобразуем массив нот в массив цифр, объединяем массив через точку в строку. добавляем в [notes]
             elif isinstance(element, chord.Chord):
                 duration = str(element.duration.quarterLength)
                 gap = str(element.offset)
-                transform_chord = ','.join(str(n) for n in element.normalOrder)
-                transform_chord = transform_chord + ';'+ duration+';' + gap
+                transform_chord = '.'.join(str(n) for n in element.normalOrder)
+                transform_chord = transform_chord
                 notes.append(transform_chord)
             # elif isinstance(element, percussion.PercussionChord):
 

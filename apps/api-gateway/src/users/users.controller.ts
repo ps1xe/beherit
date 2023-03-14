@@ -42,14 +42,6 @@ export class UsersController implements OnModuleInit {
     this.svc = this.client.getService<UserServiceClient>(USER_SERVICE_NAME);
   }
 
-  @Get('getUrl/:id')
-  async getUrlToDownloadSound(@Param('id') id: string): Promise<string> {
-    const getUrlObject = await lastValueFrom(
-      this.svc.getUrlToDownloadSound({ soundId: id }),
-    );
-    return getUrlObject.url;
-  }
-
   @Get('getSounds')
   async getListSounds(
     @Req() request: Request,

@@ -9,6 +9,7 @@ export interface GetUrlSoundRequest {
 }
 
 export interface GetUrlSoundResponse {
+  soundInfo: SoundInfo | undefined;
   url: string;
 }
 
@@ -18,6 +19,7 @@ export interface GetListSoundsRequest {
 }
 
 export interface GetListSoundsResponse {
+  soundsInfo: SoundInfo[];
   sounds: string[];
   meta: PageMeta | undefined;
 }
@@ -87,6 +89,12 @@ export interface PageMeta {
   pageCount: number;
   hasPreviousPage: boolean;
   hasNextPage: boolean;
+}
+
+export interface SoundInfo {
+  name: string;
+  genre: string;
+  length: number;
 }
 
 export const USER_PACKAGE_NAME = "user";

@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { typeorm } from '../typeorm-connection.js';
 import { config } from '@beherit/config';
-import { GetUrlToDownloadResponseDto } from '../dto/get-url-response.dto.js';
 import { Repository } from 'typeorm';
 import { s3 } from '@beherit/common/s3/s3-connection';
 import { OnModuleInit } from '@nestjs/common/interfaces/index.js';
@@ -70,9 +69,7 @@ export class UsersService implements OnModuleInit {
   }
 
   //----------------------------------------------------------------
-  async getUrlToDownloadSound(
-    soundId: string,
-  ): Promise<GetUrlToDownloadResponseDto> {
+  async getUrlToDownloadSound(soundId: string): Promise<any> {
     const sound = await lastValueFrom(this.svc.findOne({ soundId }));
 
     if (!sound.data) {
@@ -82,18 +79,23 @@ export class UsersService implements OnModuleInit {
       });
     }
 
+    const soundInfo = {
+      name: sound.data.name,
+      genre: sound.data.genre,
+      length: sound.data.length,
+    };
+
     const key = sound.data.key;
-    console.log(`;${key};`);
 
     const paramsForUrl = {
       Bucket: config.S3_BUCKET_NAME_SOUNDS,
-      Expires: 5000,
+      Expires: 86400,
       Key: key,
     };
 
     const url = await s3.getSignedUrlPromise('getObject', paramsForUrl);
 
-    return { url };
+    return { soundInfo: soundInfo, url: url };
   }
 
   //----------------------------------------------------------------
@@ -106,7 +108,7 @@ export class UsersService implements OnModuleInit {
     );
 
     if (!findSounds.sounds) {
-      return { sounds: [], meta: findSounds.meta };
+      return { soundsInfo: [], sounds: [], meta: findSounds.meta };
     }
 
     const sounds_ids = findSounds.sounds.map((sound) => {
@@ -114,13 +116,15 @@ export class UsersService implements OnModuleInit {
     });
 
     const urls = [];
+    const soundsInfo = [];
 
     for (const id of sounds_ids) {
       const getUrlObject = await this.getUrlToDownloadSound(id);
       urls.push(getUrlObject.url);
+      soundsInfo.push(getUrlObject.soundInfo);
     }
 
-    return { sounds: urls, meta: findSounds.meta };
+    return { soundsInfo: soundsInfo, sounds: urls, meta: findSounds.meta };
   }
 
   //----------------------------------------------------------------
@@ -209,7 +213,7 @@ export class UsersService implements OnModuleInit {
 
     const paramsForUrl = {
       Bucket: config.S3_BUCKET_NAME_AVATAR,
-      Expires: 5000,
+      Expires: 86400,
       Key: user.avatar,
     };
 

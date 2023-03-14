@@ -19,7 +19,8 @@ message GetUrlSoundRequest{
 }
 
 message GetUrlSoundResponse{
-    string url = 1;
+    SoundInfo soundInfo = 1;
+    string url = 2;
 }
 
 //GetListSounds
@@ -30,8 +31,9 @@ message GetListSoundsRequest{
 }
 
 message GetListSoundsResponse{
-    repeated string sounds = 1;
-    PageMeta meta = 2;
+    repeated SoundInfo soundsInfo = 1;
+    repeated string sounds = 2;
+    PageMeta meta = 3;
 }
 
 //ChangingAvatar
@@ -112,4 +114,10 @@ message PageMeta{
     int32 pageCount = 4;
     bool hasPreviousPage = 5;
     bool hasNextPage = 6;
+}
+
+message SoundInfo{
+    string name = 1;
+    string genre = 2;
+    int32 length = 3;
 }
