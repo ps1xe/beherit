@@ -57,7 +57,7 @@ def create_network(network_input, n_vocab, genre = 'rock'):
     model.add(Activation('softmax'))
     model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
 
-    if(genre == 'rock'):
+    if(genre == 'Rock'):
         model.load_weights('src/algoritm/generated/weights/test/weights.hdf5')
     else:
         model.load_weights('src/algoritm/generated/weights/test/weights.hdf5')

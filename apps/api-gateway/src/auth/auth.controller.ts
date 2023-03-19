@@ -46,9 +46,13 @@ export class AuthController implements OnModuleInit {
     );
     response.cookie('refreshToken', authenticationInformation.refreshToken, {
       httpOnly: true,
+      secure: true,
+      sameSite: 'none',
     });
     response.cookie('token', authenticationInformation.token, {
       httpOnly: true,
+      secure: true,
+      sameSite: 'none',
     });
     return authenticationInformation.userInfo;
   }
@@ -63,9 +67,13 @@ export class AuthController implements OnModuleInit {
     );
     response.cookie('refreshToken', authenticationInformation.refreshToken, {
       httpOnly: true,
+      secure: true,
+      sameSite: 'none',
     });
     response.cookie('token', authenticationInformation.token, {
       httpOnly: true,
+      secure: true,
+      sameSite: 'none',
     });
     return authenticationInformation.userInfo;
   }
@@ -80,9 +88,13 @@ export class AuthController implements OnModuleInit {
     );
     response.cookie('refreshToken', authenticationInformation.refreshToken, {
       httpOnly: true,
+      secure: true,
+      sameSite: 'none',
     });
     response.cookie('token', authenticationInformation.token, {
       httpOnly: true,
+      secure: true,
+      sameSite: 'none',
     });
     return authenticationInformation.userInfo;
   }
