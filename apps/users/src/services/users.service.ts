@@ -80,12 +80,6 @@ export class UsersService implements OnModuleInit {
       });
     }
 
-    const soundInfo = {
-      name: sound.data.name,
-      genre: sound.data.genre,
-      length: sound.data.length,
-    };
-
     const key = sound.data.key;
 
     const paramsForUrl = {
@@ -96,7 +90,14 @@ export class UsersService implements OnModuleInit {
 
     const url = await s3.getSignedUrlPromise('getObject', paramsForUrl);
 
-    return { soundInfo: soundInfo, url: url };
+    const soundInfo = {
+      name: sound.data.name,
+      genre: sound.data.genre,
+      length: sound.data.length,
+      url: url,
+    };
+
+    return { soundInfo: soundInfo };
   }
 
   //----------------------------------------------------------------
@@ -109,23 +110,21 @@ export class UsersService implements OnModuleInit {
     );
 
     if (!findSounds.sounds) {
-      return { soundsInfo: [], sounds: [], meta: findSounds.meta };
+      return { soundsInfo: [], meta: findSounds.meta };
     }
 
     const sounds_ids = findSounds.sounds.map((sound) => {
       return sound.id;
     });
 
-    const urls = [];
     const soundsInfo = [];
 
     for (const id of sounds_ids) {
       const getUrlObject = await this.getUrlToDownloadSound(id);
-      urls.push(getUrlObject.url);
       soundsInfo.push(getUrlObject.soundInfo);
     }
 
-    return { soundsInfo: soundsInfo, sounds: urls, meta: findSounds.meta };
+    return { soundsInfo: soundsInfo, meta: findSounds.meta };
   }
 
   //----------------------------------------------------------------

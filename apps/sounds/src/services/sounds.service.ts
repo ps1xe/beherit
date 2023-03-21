@@ -48,17 +48,20 @@ export class SoundsService implements OnModuleInit {
     try {
       const queryBuilder = this.soundRepository.createQueryBuilder('sound');
 
+      const skip = (pageOptionsDto.page - 1) * pageOptionsDto.take;
+
       queryBuilder
         .where('sound.userId = :userId', { userId: userId })
         .orderBy('sound.createdAt', pageOptionsDto.order)
-        .skip(pageOptionsDto.skip)
-        .take(pageOptionsDto.take);
+        .take(pageOptionsDto.take)
+        .skip(skip);
 
       const itemCount = await queryBuilder.getCount();
       const { entities } = await queryBuilder.getRawAndEntities();
 
       const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
-
+      console.log(entities);
+      console.log(pageMetaDto);
       return new PageDto(entities, pageMetaDto);
     } catch (exception) {
       throw new RpcException({

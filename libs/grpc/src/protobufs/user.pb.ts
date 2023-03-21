@@ -20,7 +20,6 @@ export interface GetListSoundsRequest {
 
 export interface GetListSoundsResponse {
   soundsInfo: SoundInfo[];
-  sounds: string[];
   meta: PageMeta | undefined;
 }
 
@@ -99,6 +98,7 @@ export interface SoundInfo {
   name: string;
   genre: string;
   length: number;
+  url: string;
 }
 
 export const USER_PACKAGE_NAME = "user";

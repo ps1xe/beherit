@@ -32,7 +32,6 @@ message GetListSoundsRequest{
 
 message GetListSoundsResponse{
     repeated SoundInfo soundsInfo = 1;
-    repeated string sounds = 2;
     PageMeta meta = 3;
 }
 
@@ -123,4 +122,5 @@ message SoundInfo{
     string name = 1;
     string genre = 2;
     int32 length = 3;
+    string url = 4;
 }
