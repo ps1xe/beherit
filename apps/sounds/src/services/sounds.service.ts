@@ -60,8 +60,6 @@ export class SoundsService implements OnModuleInit {
       const { entities } = await queryBuilder.getRawAndEntities();
 
       const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
-      console.log(entities);
-      console.log(pageMetaDto);
       return new PageDto(entities, pageMetaDto);
     } catch (exception) {
       throw new RpcException({

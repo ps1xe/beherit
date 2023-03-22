@@ -9,6 +9,7 @@ service UserService{
     rpc ChangePassword (ChangePasswordRequest) returns (Void) {}
     rpc FindOne (FindOneRequest) returns (FindOneResponse) {}
     rpc Save (PartialUser) returns (User) {}
+    rpc GetUserProfile (GetUserProfileRequest) returns (GetUserProfileResponse) {}
     rpc GetAvatar (GetAvatarRequset) returns (GetAvatarResponse) {}
 }
 
@@ -73,6 +74,18 @@ message GetAvatarRequset{
 
 message GetAvatarResponse{
     string url = 1;
+}
+
+//GetUserProfile
+
+message GetUserProfileRequest{
+    string userId = 1;
+}
+
+message GetUserProfileResponse{
+    string email = 1;
+    string username = 2;
+    string avatar = 3;
 }
 
 //Common messages

@@ -17,6 +17,8 @@ import { GetListSoundsRequsetDto } from '../dto/get-list-sounds-request.dto.js';
 import { GetListSoundsResponseDto } from '../dto/get-list-sounds-response.dto.js';
 import { GetUrlToDownloadRequestDto } from '../dto/get-url-request.dto.js';
 import { GetUrlToDownloadResponseDto } from '../dto/get-url-response.dto.js';
+import { GetUserProfileRequestDto } from '../dto/get-user-profile-request.dto.js';
+import { GetUserProfileResponseDto } from '../dto/get-user-profile-response.dto.js';
 import { RpcExceptionFilter } from '../filters/rpc-exception.filter.js';
 import { UsersService } from '../services/users.service.js';
 
@@ -38,6 +40,13 @@ export class UsersController {
     userId,
   }: GetListSoundsRequsetDto): Promise<GetListSoundsResponseDto> {
     return this.userService.getListSounds(pageOptions, userId);
+  }
+
+  @GrpcMethod(USER_SERVICE_NAME, 'GetUserProfile')
+  async getProfile({
+    userId,
+  }: GetUserProfileRequestDto): Promise<GetUserProfileResponseDto> {
+    return this.userService.getUserProfile(userId);
   }
 
   @GrpcMethod(USER_SERVICE_NAME, 'ChangingAvatar')

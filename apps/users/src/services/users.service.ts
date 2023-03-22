@@ -20,6 +20,7 @@ import {
 import { status } from '@grpc/grpc-js';
 import { GetAvatarResponseDto } from '../dto/get-avatar-response.dto.js';
 import { ChangingAvatarResponseDto } from '../dto/changing-avatar-response.dto.js';
+import { GetUserProfileResponseDto } from '../dto/get-user-profile-response.dto.js';
 
 @Injectable()
 export class UsersService implements OnModuleInit {
@@ -128,6 +129,16 @@ export class UsersService implements OnModuleInit {
   }
 
   //----------------------------------------------------------------
+  async getUserProfile(userId: string): Promise<GetUserProfileResponseDto> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    const email = user.email;
+    const { url } = await this.getAvatar(email);
+    const username = user.username;
+
+    return { email: email, username: username, avatar: url };
+  }
+
+  //----------------------------------------------------------------
   async changingAvatar(
     userId: string,
     avatar: Buffer,
@@ -179,10 +190,13 @@ export class UsersService implements OnModuleInit {
       });
     }
 
+    console.log(currentPassword);
     const isPasswordValid = await bcrypt.compareSync(
       currentPassword,
       user.password,
     );
+
+    console.log(isPasswordValid);
 
     if (!isPasswordValid) {
       throw new RpcException({

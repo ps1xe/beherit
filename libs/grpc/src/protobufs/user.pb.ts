@@ -56,6 +56,16 @@ export interface GetAvatarResponse {
   url: string;
 }
 
+export interface GetUserProfileRequest {
+  userId: string;
+}
+
+export interface GetUserProfileResponse {
+  email: string;
+  username: string;
+  avatar: string;
+}
+
 export interface Void {
 }
 
@@ -116,6 +126,8 @@ export interface UserServiceClient {
 
   save(request: PartialUser): Observable<User>;
 
+  getUserProfile(request: GetUserProfileRequest): Observable<GetUserProfileResponse>;
+
   getAvatar(request: GetAvatarRequset): Observable<GetAvatarResponse>;
 }
 
@@ -138,6 +150,10 @@ export interface UserServiceController {
 
   save(request: PartialUser): Promise<User> | Observable<User> | User;
 
+  getUserProfile(
+    request: GetUserProfileRequest,
+  ): Promise<GetUserProfileResponse> | Observable<GetUserProfileResponse> | GetUserProfileResponse;
+
   getAvatar(request: GetAvatarRequset): Promise<GetAvatarResponse> | Observable<GetAvatarResponse> | GetAvatarResponse;
 }
 
@@ -150,6 +166,7 @@ export function UserServiceControllerMethods() {
       "changePassword",
       "findOne",
       "save",
+      "getUserProfile",
       "getAvatar",
     ];
     for (const method of grpcMethods) {

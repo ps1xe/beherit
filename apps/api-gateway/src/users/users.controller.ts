@@ -15,6 +15,7 @@ import type { ClientGrpc } from '@nestjs/microservices';
 import {
   ChangingAvatarResponse,
   GetListSoundsResponse,
+  GetUserProfileResponse,
   UserServiceClient,
   USER_SERVICE_NAME,
   Void,
@@ -76,6 +77,14 @@ export class UsersController implements OnModuleInit {
       }),
     );
     return url;
+  }
+
+  @Get('getProfile')
+  async getProfile(@Req() request: Request): Promise<GetUserProfileResponse> {
+    const token = request.cookies.token;
+    const { userId } = await this.authService.validate(token);
+    const profile = await lastValueFrom(this.svc.getUserProfile({ userId }));
+    return profile;
   }
 
   @Post('changePassword')
