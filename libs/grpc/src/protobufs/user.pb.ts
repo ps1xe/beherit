@@ -66,6 +66,11 @@ export interface GetUserProfileResponse {
   avatar: string;
 }
 
+export interface ChangeNicknameRequest {
+  userId: string;
+  newNickname: string;
+}
+
 export interface Void {
 }
 
@@ -129,6 +134,8 @@ export interface UserServiceClient {
   getUserProfile(request: GetUserProfileRequest): Observable<GetUserProfileResponse>;
 
   getAvatar(request: GetAvatarRequset): Observable<GetAvatarResponse>;
+
+  changeNickname(request: ChangeNicknameRequest): Observable<Void>;
 }
 
 export interface UserServiceController {
@@ -155,6 +162,8 @@ export interface UserServiceController {
   ): Promise<GetUserProfileResponse> | Observable<GetUserProfileResponse> | GetUserProfileResponse;
 
   getAvatar(request: GetAvatarRequset): Promise<GetAvatarResponse> | Observable<GetAvatarResponse> | GetAvatarResponse;
+
+  changeNickname(request: ChangeNicknameRequest): Promise<Void> | Observable<Void> | Void;
 }
 
 export function UserServiceControllerMethods() {
@@ -168,6 +177,7 @@ export function UserServiceControllerMethods() {
       "save",
       "getUserProfile",
       "getAvatar",
+      "changeNickname",
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);

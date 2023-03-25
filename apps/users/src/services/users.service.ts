@@ -238,4 +238,13 @@ export class UsersService implements OnModuleInit {
 
     return { url };
   }
+
+  async changeNickname(userId: string, newNickname: string): Promise<Void> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    this.userRepository.save({
+      ...user,
+      username: newNickname,
+    });
+    return {};
+  }
 }

@@ -100,4 +100,17 @@ export class UsersController implements OnModuleInit {
       newPassword: changePasswordBody.newPassword,
     });
   }
+
+  @Post('changeNickname')
+  async changeNickname(
+    @Body() changeNicknameBody,
+    @Req() request: Request,
+  ): Promise<Void> {
+    const token = request.cookies.token;
+    const { userId } = await this.authService.validate(token);
+    return this.svc.changeNickname({
+      userId: userId,
+      newNickname: changeNicknameBody.newNickname,
+    });
+  }
 }

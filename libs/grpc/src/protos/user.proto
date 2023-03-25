@@ -11,6 +11,7 @@ service UserService{
     rpc Save (PartialUser) returns (User) {}
     rpc GetUserProfile (GetUserProfileRequest) returns (GetUserProfileResponse) {}
     rpc GetAvatar (GetAvatarRequset) returns (GetAvatarResponse) {}
+    rpc ChangeNickname (ChangeNicknameRequest) returns (Void) {}
 }
 
 //GetUrlToDownloadSound
@@ -86,6 +87,13 @@ message GetUserProfileResponse{
     string email = 1;
     string username = 2;
     string avatar = 3;
+}
+
+//ChangeNickname
+
+message ChangeNicknameRequest{
+    string userId = 1;
+    string newNickname = 2;
 }
 
 //Common messages

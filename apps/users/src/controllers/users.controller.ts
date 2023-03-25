@@ -7,6 +7,7 @@ import {
 } from '@beherit/grpc/protobufs/user.pb';
 import { Controller, UseFilters } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
+import { ChangeNicknameRequestDto } from '../dto/change-nickname-request.dto.js';
 import { ChangePasswordRequestDto } from '../dto/change-password-request.dto.js';
 import { ChangingAvatarRequestDto } from '../dto/changing-avatar-request.dto.js';
 import { ChangingAvatarResponseDto } from '../dto/changing-avatar-response.dto.js';
@@ -87,5 +88,13 @@ export class UsersController {
     email,
   }: GetAvatarRequestDto): Promise<GetAvatarResponseDto> {
     return this.userService.getAvatar(email);
+  }
+
+  @GrpcMethod(USER_SERVICE_NAME, 'ChangeNickname')
+  async changeNickname({
+    userId,
+    newNickname,
+  }: ChangeNicknameRequestDto): Promise<Void> {
+    return this.userService.changeNickname(userId, newNickname);
   }
 }
