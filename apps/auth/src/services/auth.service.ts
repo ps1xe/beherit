@@ -95,8 +95,7 @@ export class AuthService implements OnModuleInit {
   //----------------------------------------------------------------
   async login(email: string, password: string): Promise<LoginResponseDto> {
     const user = await lastValueFrom(this.svc.findOne({ email }));
-
-    if (!user) {
+    if (!user.data) {
       throw new RpcException({
         message: 'Email not found',
         code: status.NOT_FOUND,
@@ -157,28 +156,29 @@ export class AuthService implements OnModuleInit {
 
   //----------------------------------------------------------------
   async validate(token: string): Promise<ValidateResponseDto> {
-    const decoded = await this.jwtService.verify(token, {
-      secret: config.JWT_SECRET_KEY,
-    });
-    if (!decoded) {
-      throw new RpcException({
-        message: 'Token is invalid',
-        code: status.UNAUTHENTICATED,
+    try {
+      const decoded = await this.jwtService.verify(token, {
+        secret: config.JWT_SECRET_KEY,
       });
+
+      const user = await lastValueFrom(
+        this.svc.findOne({ email: decoded.email }),
+      );
+
+      return { userId: user.data.id };
+    } catch (error) {
+      if (error.name === 'TokenExpiredError' || 'JsonWebTokenError') {
+        throw new RpcException({
+          message: 'Token is invalid',
+          code: status.UNAUTHENTICATED,
+        });
+      } else {
+        throw new RpcException({
+          message: 'User not found',
+          code: status.NOT_FOUND,
+        });
+      }
     }
-
-    const user = await lastValueFrom(
-      this.svc.findOne({ email: decoded.email }),
-    );
-
-    if (!user) {
-      throw new RpcException({
-        message: 'User not found',
-        code: status.NOT_FOUND,
-      });
-    }
-
-    return { userId: user.data.id };
   }
 
   //----------------------------------------------------------------------------------
@@ -190,7 +190,7 @@ export class AuthService implements OnModuleInit {
     const user = await lastValueFrom(
       this.svc.findOne({ email: decoded.email }),
     );
-    if (!user) {
+    if (!user.data) {
       throw new RpcException({
         message: 'User not found',
         code: status.NOT_FOUND,
@@ -258,7 +258,7 @@ export class AuthService implements OnModuleInit {
   async getLinkToResetPassword(email: string): Promise<Void> {
     const user = await lastValueFrom(this.svc.findOne({ email }));
 
-    if (!user) {
+    if (!user.data) {
       throw new RpcException({
         message: 'Email not found',
         code: status.NOT_FOUND,
@@ -316,7 +316,7 @@ export class AuthService implements OnModuleInit {
       this.svc.findOne({ email: decoded.email }),
     );
 
-    if (!user) {
+    if (!user.data) {
       throw new RpcException({
         message: 'User not found',
         code: status.NOT_FOUND,

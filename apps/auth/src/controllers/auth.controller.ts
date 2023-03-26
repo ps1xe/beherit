@@ -17,8 +17,8 @@ import { ValidateRequestDto } from '../dto/validate-request.dto.js';
 import { RpcExceptionFilter } from '../filters/rpc-exception.filter.js';
 import { AuthService } from '../services/auth.service.js';
 
-@UseFilters(new RpcExceptionFilter())
 @Controller()
+@UseFilters(new RpcExceptionFilter())
 export class AuthController {
   constructor(
     @Inject(AuthService)

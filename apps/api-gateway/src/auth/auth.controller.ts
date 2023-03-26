@@ -18,11 +18,14 @@ import {
   Req,
   OnModuleInit,
   Param,
+  UseFilters,
 } from '@nestjs/common';
 import type { ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import type { Request, Response } from 'express';
+import { GrpcExceptionFilter } from '../filters/http-exception.filter.js';
 
+@UseFilters(GrpcExceptionFilter)
 @Controller('auth')
 export class AuthController implements OnModuleInit {
   private svc: AuthServiceClient;
