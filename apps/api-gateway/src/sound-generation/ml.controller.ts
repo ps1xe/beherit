@@ -5,6 +5,7 @@ import {
   OnModuleInit,
   Post,
   Req,
+  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -16,7 +17,9 @@ import type { ClientGrpc } from '@nestjs/microservices';
 import { AuthGuard } from '../auth/guards/auth.guard.js';
 import type { Request } from 'express';
 import { AuthService } from '../auth/auth.service.js';
+import { GrpcExceptionFilter } from '../filters/http-exception.filter.js';
 
+@UseFilters(GrpcExceptionFilter)
 @Controller('ml')
 @UseGuards(AuthGuard)
 export class MlController implements OnModuleInit {

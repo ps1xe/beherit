@@ -190,13 +190,10 @@ export class UsersService implements OnModuleInit {
       });
     }
 
-    console.log(currentPassword);
     const isPasswordValid = await bcrypt.compareSync(
       currentPassword,
       user.password,
     );
-
-    console.log(isPasswordValid);
 
     if (!isPasswordValid) {
       throw new RpcException({

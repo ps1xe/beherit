@@ -8,6 +8,7 @@ import {
   Query,
   Req,
   UploadedFile,
+  UseFilters,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -26,7 +27,9 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '../auth/guards/auth.guard.js';
 import { lastValueFrom } from 'rxjs';
 import { PageOptionsDto } from '@beherit/common/pagination/dto/PageOptionsDto';
+import { GrpcExceptionFilter } from '../filters/http-exception.filter.js';
 
+@UseFilters(GrpcExceptionFilter)
 @Controller('users')
 @UseGuards(AuthGuard)
 export class UsersController implements OnModuleInit {
