@@ -54,16 +54,14 @@ export class MlService implements OnModuleInit {
     // const key = execSync(
     //   `python ..\\sound-generation\\src\\algoritm\\generate-sound.py ${genre} ${length}`,
     // );
-    const key = randomUUID();
-    setTimeout(async () => {
-      const sound = await lastValueFrom(
-        this.svcSounds.save({
-          ...newSound.data,
-          key: key.toString().trim(),
-          loaded: true,
-        }),
-      );
-    }, 5000);
+
+    // const sound = await lastValueFrom(
+    //   this.svcSounds.save({
+    //     ...newSound.data,
+    //     key: key.toString().trim(),
+    //     loaded: true,
+    //   }),
+    // );
 
     // try {
     //   fs.unlink(
@@ -73,6 +71,26 @@ export class MlService implements OnModuleInit {
     //   console.log('Temporary midi file not found!');
     // }
 
-    return {};
+    // return {};
+
+    //Искусственная задержка(аля типа генерация)
+    const result = new Promise((resolve) => {
+      setTimeout(async () => {
+        console.log('Задержка в 5 секунд завершена');
+        const key = randomUUID();
+
+        const sound = await lastValueFrom(
+          this.svcSounds.save({
+            ...newSound.data,
+            key: key.toString().trim(),
+            loaded: true,
+          }),
+        );
+
+        resolve({});
+      }, 5000);
+    });
+
+    return result;
   }
 }
