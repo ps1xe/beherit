@@ -5,6 +5,7 @@ import {
   SOUNDS_SERVICE_NAME,
 } from '@beherit/grpc/protobufs/sounds.pb';
 import { SoundsController } from './sounds.controller.js';
+import { AuthModule } from '../auth/auth.module.js';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { SoundsController } from './sounds.controller.js';
         },
       },
     ]),
+    AuthModule,
   ],
 
   controllers: [SoundsController],
