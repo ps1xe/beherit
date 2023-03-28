@@ -22,7 +22,6 @@ message GetUrlSoundRequest{
 
 message GetUrlSoundResponse{
     SoundInfo soundInfo = 1;
-    string url = 2;
 }
 
 //GetListSounds
@@ -144,4 +143,6 @@ message SoundInfo{
     string genre = 2;
     int32 length = 3;
     string url = 4;
+    bool loaded = 5;
+    string id = 6;
 }

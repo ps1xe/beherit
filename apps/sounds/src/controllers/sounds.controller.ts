@@ -14,6 +14,7 @@ import { FindOneDto } from '../dto/find-one.dto.js';
 import { FindDto } from '../dto/find.dto.js';
 import { SaveDto } from '../dto/save.dto.js';
 import { SaveResponseDto } from '../dto/save-response.dto.js';
+import { DeleteDto } from '../dto/delete.dto.js';
 
 @UseFilters(new RpcExceptionFilter())
 @Controller()
@@ -36,12 +37,27 @@ export class SoundsController {
 
   @GrpcMethod(SOUNDS_SERVICE_NAME, 'Save')
   async save({
+    id,
     name,
     key,
     userId,
     genre,
     length,
+    loaded,
   }: SaveDto): Promise<SaveResponseDto> {
-    return this.soundsService.save(name, key, userId, genre, length);
+    return this.soundsService.save(
+      name,
+      key,
+      userId,
+      genre,
+      length,
+      loaded,
+      id,
+    );
+  }
+
+  @GrpcMethod(SOUNDS_SERVICE_NAME, 'Delete')
+  async deleteSound({ soundId }: DeleteDto): Promise<Void> {
+    return this.soundsService.deleteSound(soundId);
   }
 }

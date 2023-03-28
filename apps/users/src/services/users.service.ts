@@ -21,6 +21,7 @@ import { status } from '@grpc/grpc-js';
 import { GetAvatarResponseDto } from '../dto/get-avatar-response.dto.js';
 import { ChangingAvatarResponseDto } from '../dto/changing-avatar-response.dto.js';
 import { GetUserProfileResponseDto } from '../dto/get-user-profile-response.dto.js';
+import { GetUrlToDownloadResponseDto } from '../dto/get-url-response.dto.js';
 
 @Injectable()
 export class UsersService implements OnModuleInit {
@@ -71,7 +72,9 @@ export class UsersService implements OnModuleInit {
   }
 
   //----------------------------------------------------------------
-  async getUrlToDownloadSound(soundId: string): Promise<any> {
+  async getUrlToDownloadSound(
+    soundId: string,
+  ): Promise<GetUrlToDownloadResponseDto> {
     const sound = await lastValueFrom(this.svc.findOne({ soundId }));
 
     if (!sound.data) {
@@ -83,6 +86,18 @@ export class UsersService implements OnModuleInit {
 
     const key = sound.data.key;
 
+    if (key === '') {
+      const soundInfo = {
+        id: sound.data.id,
+        name: sound.data.name,
+        genre: sound.data.genre,
+        length: sound.data.length,
+        url: '',
+        loaded: sound.data.loaded,
+      };
+      return { soundInfo: soundInfo };
+    }
+
     const paramsForUrl = {
       Bucket: config.S3_BUCKET_NAME_SOUNDS,
       Expires: 86400,
@@ -92,10 +107,12 @@ export class UsersService implements OnModuleInit {
     const url = await s3.getSignedUrlPromise('getObject', paramsForUrl);
 
     const soundInfo = {
+      id: sound.data.id,
       name: sound.data.name,
       genre: sound.data.genre,
       length: sound.data.length,
       url: url,
+      loaded: sound.data.loaded,
     };
 
     return { soundInfo: soundInfo };
@@ -222,6 +239,7 @@ export class UsersService implements OnModuleInit {
     return {};
   }
 
+  //----------------------------------------------------------------
   async getAvatar(email: string): Promise<GetAvatarResponseDto> {
     const user = await this.userRepository.findOne({ where: { email: email } });
 
@@ -236,6 +254,7 @@ export class UsersService implements OnModuleInit {
     return { url };
   }
 
+  //----------------------------------------------------------------
   async changeNickname(userId: string, newNickname: string): Promise<Void> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     this.userRepository.save({

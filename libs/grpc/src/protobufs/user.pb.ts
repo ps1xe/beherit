@@ -10,7 +10,6 @@ export interface GetUrlSoundRequest {
 
 export interface GetUrlSoundResponse {
   soundInfo: SoundInfo | undefined;
-  url: string;
 }
 
 export interface GetListSoundsRequest {
@@ -114,6 +113,8 @@ export interface SoundInfo {
   genre: string;
   length: number;
   url: string;
+  loaded: boolean;
+  id: string;
 }
 
 export const USER_PACKAGE_NAME = "user";

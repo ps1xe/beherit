@@ -3,7 +3,7 @@ syntax = "proto3";
 package ml;
 
 service MlService{
-    rpc Generate (GenerateRequest) returns (GenerateResponse) {}
+    rpc Generate (GenerateRequest) returns (Void) {}
 }
 
 //Generate
@@ -12,10 +12,6 @@ message GenerateRequest{
     string genre = 2; 
     int32 length = 3;
     string userId = 4;
-}
-
-message GenerateResponse{
-    string url = 1;
 }
 
 

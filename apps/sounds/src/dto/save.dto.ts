@@ -1,8 +1,11 @@
 import { SaveRequest } from '@beherit/grpc/protobufs/sounds.pb';
 import { Type } from 'class-transformer';
-import { IsNumber, IsString, IsUUID } from 'class-validator';
+import { IsNumber, IsString, IsUUID, IsBoolean } from 'class-validator';
 
 export class SaveDto implements SaveRequest {
+  @Type(() => String)
+  readonly id?: string;
+
   @Type(() => String)
   @IsString()
   readonly name: string;
@@ -22,4 +25,8 @@ export class SaveDto implements SaveRequest {
   @Type(() => Number)
   @IsNumber()
   readonly length: number;
+
+  @Type(() => Boolean)
+  @IsBoolean()
+  readonly loaded: boolean;
 }

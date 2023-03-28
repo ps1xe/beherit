@@ -12,12 +12,18 @@ export interface FindOneResponse {
   data?: Sound | undefined;
 }
 
+export interface DeleteRequest {
+  soundId: string;
+}
+
 export interface SaveRequest {
+  id?: string | undefined;
   name: string;
   key: string;
   genre: string;
   userId: string;
   length: number;
+  loaded: boolean;
 }
 
 export interface SaveResponse {
@@ -38,12 +44,13 @@ export interface Void {
 }
 
 export interface Sound {
-  id: string;
+  id?: string | undefined;
   name: string;
   key: string;
   userId: string;
   genre: string;
   length: number;
+  loaded: boolean;
 }
 
 export interface PageOptionsDto {
@@ -69,6 +76,8 @@ export interface SoundsServiceClient {
   find(request: FindRequest): Observable<FindResponse>;
 
   save(request: SaveRequest): Observable<SaveResponse>;
+
+  delete(request: DeleteRequest): Observable<Void>;
 }
 
 export interface SoundsServiceController {
@@ -77,11 +86,13 @@ export interface SoundsServiceController {
   find(request: FindRequest): Promise<FindResponse> | Observable<FindResponse> | FindResponse;
 
   save(request: SaveRequest): Promise<SaveResponse> | Observable<SaveResponse> | SaveResponse;
+
+  delete(request: DeleteRequest): Promise<Void> | Observable<Void> | Void;
 }
 
 export function SoundsServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["findOne", "find", "save"];
+    const grpcMethods: string[] = ["findOne", "find", "save", "delete"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("SoundsService", method)(constructor.prototype[method], method, descriptor);

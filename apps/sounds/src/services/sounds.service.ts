@@ -10,7 +10,10 @@ import { status } from '@grpc/grpc-js';
 import {
   FindOneResponse,
   SaveResponse,
+  Void,
 } from '@beherit/grpc/protobufs/sounds.pb';
+import { config } from '@beherit/config';
+import { s3 } from '@beherit/common/s3/s3-connection';
 
 @Injectable()
 export class SoundsService implements OnModuleInit {
@@ -58,7 +61,6 @@ export class SoundsService implements OnModuleInit {
 
       const itemCount = await queryBuilder.getCount();
       const { entities } = await queryBuilder.getRawAndEntities();
-
       const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
       return new PageDto(entities, pageMetaDto);
     } catch (exception) {
@@ -69,20 +71,25 @@ export class SoundsService implements OnModuleInit {
     }
   }
 
+  //----------------------------------------------------------------
   async save(
     name: string,
     key: string,
     userId: string,
     genre: string,
     length: number,
+    loaded: boolean,
+    id: string,
   ): Promise<SaveResponse> {
     try {
       const newSound = {
+        id: id,
         name: name,
         key: key,
         userId: userId,
         genre: genre,
         length: length,
+        loaded: loaded,
       } as Sound;
 
       const sound = await this.soundRepository.save(newSound);
@@ -92,6 +99,31 @@ export class SoundsService implements OnModuleInit {
       console.log(exception);
       throw new RpcException({
         message: 'DB write error',
+        code: status.INTERNAL,
+      });
+    }
+  }
+
+  //----------------------------------------------------------------
+  async deleteSound(soundId: string): Promise<Void> {
+    try {
+      const sound = await this.soundRepository.findOne({
+        where: { id: soundId },
+      });
+      if (sound.key !== '') {
+        const paramsForDelete = {
+          Bucket: config.S3_BUCKET_NAME_SOUNDS,
+          Key: sound.key,
+        };
+
+        s3.deleteObject(paramsForDelete);
+      }
+      this.soundRepository.delete({ id: soundId });
+
+      return {};
+    } catch (exception) {
+      new RpcException({
+        message: 'Deletion error',
         code: status.INTERNAL,
       });
     }

@@ -12,10 +12,6 @@ export interface GenerateRequest {
   userId: string;
 }
 
-export interface GenerateResponse {
-  url: string;
-}
-
 /** Common message */
 export interface Void {
 }
@@ -23,11 +19,11 @@ export interface Void {
 export const ML_PACKAGE_NAME = "ml";
 
 export interface MlServiceClient {
-  generate(request: GenerateRequest): Observable<GenerateResponse>;
+  generate(request: GenerateRequest): Observable<Void>;
 }
 
 export interface MlServiceController {
-  generate(request: GenerateRequest): Promise<GenerateResponse> | Observable<GenerateResponse> | GenerateResponse;
+  generate(request: GenerateRequest): Promise<Void> | Observable<Void> | Void;
 }
 
 export function MlServiceControllerMethods() {

@@ -1,5 +1,4 @@
 import {
-  GenerateResponse,
   ML_SERVICE_NAME,
   Void,
 } from '@beherit/grpc/protobufs/sound-generation.pb';
@@ -16,12 +15,7 @@ export class MlController {
   ) {}
 
   @GrpcMethod(ML_SERVICE_NAME, 'Generate')
-  async generate({
-    name,
-    genre,
-    length,
-    userId,
-  }: GenerateDto): Promise<GenerateResponse> {
+  async generate({ name, genre, length, userId }: GenerateDto): Promise<Void> {
     return this.mlService.generate(name, genre, length, userId);
   }
 }

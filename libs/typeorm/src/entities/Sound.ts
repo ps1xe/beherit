@@ -28,6 +28,9 @@ export class Sound extends BaseEntity {
   @Column()
   userId!: User['id'];
 
+  @Column({ name: 'loaded' })
+  loaded: boolean;
+
   @ManyToOne(() => User, (user) => user.sounds)
   user!: Relation<User>;
 }

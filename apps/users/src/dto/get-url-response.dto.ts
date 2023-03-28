@@ -5,5 +5,4 @@ import {
 
 export class GetUrlToDownloadResponseDto implements GetUrlSoundResponse {
   soundInfo: SoundInfo;
-  url: string;
 }

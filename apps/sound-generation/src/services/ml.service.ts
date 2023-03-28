@@ -7,12 +7,13 @@ import { Inject } from '@nestjs/common/decorators/core/inject.decorator.js';
 import { ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import { execSync } from 'child_process';
-import { GenerateResponse } from '@beherit/grpc/protobufs/sound-generation.pb';
 import { promises as fs } from 'fs';
 import {
   UserServiceClient,
   USER_SERVICE_NAME,
 } from '@beherit/grpc/protobufs/user.pb';
+import { Void } from '@beherit/grpc/protobufs/sound-generation.pb';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class MlService implements OnModuleInit {
@@ -38,35 +39,40 @@ export class MlService implements OnModuleInit {
     genre: string,
     length: number,
     userId: string,
-  ): Promise<GenerateResponse> {
-    const key = execSync(
-      `python ..\\sound-generation\\src\\algoritm\\generate-sound.py ${genre} ${length}`,
-    );
-
-    const sound = await lastValueFrom(
+  ): Promise<Void> {
+    const newSound = await lastValueFrom(
       this.svcSounds.save({
-        key: key.toString().trim(),
+        key: '',
         genre: genre,
         name: name,
         length: length,
         userId: userId,
+        loaded: false,
       }),
     );
 
-    const soundId = sound.data.id;
-
-    const url = await lastValueFrom(
-      this.svcUsers.getUrlToDownloadSound({ soundId }),
-    );
-
-    try {
-      fs.unlink(
-        '..\\sound-generation\\src\\algoritm\\generated\\tmp\\generated-output.mid',
+    // const key = execSync(
+    //   `python ..\\sound-generation\\src\\algoritm\\generate-sound.py ${genre} ${length}`,
+    // );
+    const key = randomUUID();
+    setTimeout(async () => {
+      const sound = await lastValueFrom(
+        this.svcSounds.save({
+          ...newSound.data,
+          key: key.toString().trim(),
+          loaded: true,
+        }),
       );
-    } catch (exception) {
-      console.log('Temporary midi file not found!');
-    }
+    }, 5000);
 
-    return url;
+    // try {
+    //   fs.unlink(
+    //     '..\\sound-generation\\src\\algoritm\\generated\\tmp\\generated-output.mid',
+    //   );
+    // } catch (exception) {
+    //   console.log('Temporary midi file not found!');
+    // }
+
+    return {};
   }
 }
