@@ -9,7 +9,7 @@ import { LoginResponseDto } from '../dto/login-response.dto.js';
 import { RegisterResponseDto } from '../dto/register-response.dto.js';
 import { randomUUID } from 'crypto';
 import { MailerService } from '@nestjs-modules/mailer/dist/mailer.service.js';
-import { Void } from '@beherit/grpc/protobufs/auth.pb';
+import { User, Void } from '@beherit/grpc/protobufs/auth.pb';
 import {
   UserServiceClient,
   USER_SERVICE_NAME,
@@ -283,7 +283,7 @@ export class AuthService implements OnModuleInit {
       }),
     );
 
-    const url = `http://localhost:4000/auth/resetPassword/${tokenRecovery}`;
+    const url = `http://localhost:3000/reset-password/${tokenRecovery}`;
 
     this.mailerService
       .sendMail({
@@ -308,44 +308,56 @@ export class AuthService implements OnModuleInit {
 
   //----------------------------------------------------------------
   async resetPassword(token: string, newPassword: string): Promise<Void> {
-    const decoded = this.jwtService.verify(token, {
-      secret: config.JWT_RECOVERY_SECRET_KEY,
-    });
-
-    const user = await lastValueFrom(
-      this.svc.findOne({ email: decoded.email }),
-    );
-
-    if (!user.data) {
-      throw new RpcException({
-        message: 'User not found',
-        code: status.NOT_FOUND,
-      });
-    }
-
-    const coincidenceTokens = bcrypt.compareSync(
-      token,
-      user.data.recoveryToken,
-    );
-
-    if (!coincidenceTokens) {
-      throw new RpcException({
-        message: 'Recovery token invalid',
-        code: status.UNAUTHENTICATED,
-      });
-    }
+    const user = await this.verificationRecoveryToken(token);
 
     const salt = await bcrypt.genSalt(5);
     const hashedPassword = await bcrypt.hashSync(newPassword, salt);
 
     lastValueFrom(
       this.svc.save({
-        ...user.data,
+        ...user,
         password: hashedPassword,
         recoveryToken: 'null',
       }),
     );
 
     return {};
+  }
+
+  async verificationRecoveryToken(token: string): Promise<User> {
+    try {
+      const decoded = this.jwtService.verify(token, {
+        secret: config.JWT_RECOVERY_SECRET_KEY,
+      });
+
+      const user = await lastValueFrom(
+        this.svc.findOne({ email: decoded.email }),
+      );
+
+      if (!user.data) {
+        throw new RpcException({
+          message: 'User not found',
+          code: status.NOT_FOUND,
+        });
+      }
+
+      const coincidenceTokens = bcrypt.compareSync(
+        token,
+        user.data.recoveryToken,
+      );
+
+      if (!coincidenceTokens) {
+        throw new RpcException({
+          message: 'Recovery token invalid',
+          code: status.UNAUTHENTICATED,
+        });
+      }
+      return user.data;
+    } catch (exception) {
+      throw new RpcException({
+        message: 'Recovery token invalid',
+        code: status.UNAUTHENTICATED,
+      });
+    }
   }
 }

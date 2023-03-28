@@ -9,6 +9,17 @@ service AuthService {
   rpc UpdateTokens (UpdateTokensRequest) returns (UpdateTokensResponse) {}
   rpc GetLinkToResetPassword (GetLinkToResetPasswordRequest) returns (Void) {}
   rpc ResetPassword (ResetPasswordRequest) returns (Void) {}
+  rpc VerificationRecoveryToken (VerificationRecoveryTokenRequest) returns (VerificationRecoveryTokenResponse) {}
+}
+
+
+//VerificationRecoveryToken
+message VerificationRecoveryTokenRequest{
+  string token = 1;
+}
+
+message VerificationRecoveryTokenResponse{
+  bool isValid = 1;
 }
 
 // Register
@@ -84,4 +95,15 @@ message UserInfo{
   string email = 1;
   string username = 2;
   string avatar = 3;
+}
+
+//Entity 
+message User{
+  string id = 1;
+  string username = 2;
+  string email = 3;
+  string password = 4;
+  string avatar = 5;
+  string refreshToken = 6;
+  string recoveryToken = 7;
 }

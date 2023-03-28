@@ -4,6 +4,15 @@ import { Observable } from "rxjs";
 
 export const protobufPackage = "auth";
 
+/** VerificationRecoveryToken */
+export interface VerificationRecoveryTokenRequest {
+  token: string;
+}
+
+export interface VerificationRecoveryTokenResponse {
+  isValid: boolean;
+}
+
 export interface RegisterRequest {
   email: string;
   username: string;
@@ -64,6 +73,17 @@ export interface UserInfo {
   avatar: string;
 }
 
+/** Entity */
+export interface User {
+  id: string;
+  username: string;
+  email: string;
+  password: string;
+  avatar: string;
+  refreshToken: string;
+  recoveryToken: string;
+}
+
 export const AUTH_PACKAGE_NAME = "auth";
 
 export interface AuthServiceClient {
@@ -78,6 +98,8 @@ export interface AuthServiceClient {
   getLinkToResetPassword(request: GetLinkToResetPasswordRequest): Observable<Void>;
 
   resetPassword(request: ResetPasswordRequest): Observable<Void>;
+
+  verificationRecoveryToken(request: VerificationRecoveryTokenRequest): Observable<VerificationRecoveryTokenResponse>;
 }
 
 export interface AuthServiceController {
@@ -94,6 +116,13 @@ export interface AuthServiceController {
   getLinkToResetPassword(request: GetLinkToResetPasswordRequest): Promise<Void> | Observable<Void> | Void;
 
   resetPassword(request: ResetPasswordRequest): Promise<Void> | Observable<Void> | Void;
+
+  verificationRecoveryToken(
+    request: VerificationRecoveryTokenRequest,
+  ):
+    | Promise<VerificationRecoveryTokenResponse>
+    | Observable<VerificationRecoveryTokenResponse>
+    | VerificationRecoveryTokenResponse;
 }
 
 export function AuthServiceControllerMethods() {
@@ -105,6 +134,7 @@ export function AuthServiceControllerMethods() {
       "updateTokens",
       "getLinkToResetPassword",
       "resetPassword",
+      "verificationRecoveryToken",
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);

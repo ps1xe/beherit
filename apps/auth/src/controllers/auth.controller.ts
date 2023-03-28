@@ -4,6 +4,7 @@ import {
   RegisterResponse,
   UpdateTokensResponse,
   ValidateResponse,
+  VerificationRecoveryTokenResponse,
   Void,
 } from '@beherit/grpc/protobufs/auth.pb';
 import { Controller, Inject, UseFilters } from '@nestjs/common';
@@ -14,6 +15,7 @@ import { RegisterRequestDto } from '../dto/register-request.dto.js';
 import { ResetPasswordDto } from '../dto/reset-password.dto.js';
 import { UpdateTokensRequestDto } from '../dto/update-tokens-request.dto.js';
 import { ValidateRequestDto } from '../dto/validate-request.dto.js';
+import { VerificationRecoveryToken } from '../dto/verification-recovery-token-request.dto.js';
 import { RpcExceptionFilter } from '../filters/rpc-exception.filter.js';
 import { AuthService } from '../services/auth.service.js';
 
@@ -83,5 +85,14 @@ export class AuthController {
   @GrpcMethod(AUTH_SERVICE_NAME, 'ResetPassword')
   async resetPassword({ token, newPassword }: ResetPasswordDto): Promise<Void> {
     return this.authService.resetPassword(token, newPassword);
+  }
+
+  @GrpcMethod(AUTH_SERVICE_NAME, 'VerificationRecoveryToken')
+  async verificationRecoveryToken({
+    token,
+  }: VerificationRecoveryToken): Promise<VerificationRecoveryTokenResponse> {
+    console.log('a');
+    const isValid = !!this.authService.verificationRecoveryToken(token);
+    return { isValid };
   }
 }

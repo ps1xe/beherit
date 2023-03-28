@@ -19,6 +19,7 @@ import {
   OnModuleInit,
   Param,
   UseFilters,
+  Get,
 } from '@nestjs/common';
 import type { ClientGrpc } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
@@ -118,5 +119,15 @@ export class AuthController implements OnModuleInit {
       token: token,
       newPassword: resetPasswordBody.newPassword,
     });
+  }
+
+  @Get('verificationRecoveryToken/:token')
+  async verificationRecoveryToken(
+    @Param('token') token: string,
+  ): Promise<boolean> {
+    const { isValid } = await lastValueFrom(
+      this.svc.verificationRecoveryToken({ token }),
+    );
+    return isValid;
   }
 }
