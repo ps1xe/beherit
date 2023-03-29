@@ -326,10 +326,9 @@ export class AuthService implements OnModuleInit {
 
   async verificationRecoveryToken(token: string): Promise<User> {
     try {
-      const decoded = this.jwtService.verify(token, {
+      const decoded = await this.jwtService.verify(token, {
         secret: config.JWT_RECOVERY_SECRET_KEY,
       });
-
       const user = await lastValueFrom(
         this.svc.findOne({ email: decoded.email }),
       );
@@ -352,10 +351,11 @@ export class AuthService implements OnModuleInit {
           code: status.UNAUTHENTICATED,
         });
       }
+
       return user.data;
     } catch (exception) {
       throw new RpcException({
-        message: 'Recovery token invalid',
+        message: 'Ссылка не действительна!!!',
         code: status.UNAUTHENTICATED,
       });
     }

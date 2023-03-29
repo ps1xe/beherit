@@ -91,8 +91,7 @@ export class AuthController {
   async verificationRecoveryToken({
     token,
   }: VerificationRecoveryToken): Promise<VerificationRecoveryTokenResponse> {
-    console.log('a');
-    const isValid = !!this.authService.verificationRecoveryToken(token);
-    return { isValid };
+    const isValid = await this.authService.verificationRecoveryToken(token);
+    return { isValid: !!isValid };
   }
 }
