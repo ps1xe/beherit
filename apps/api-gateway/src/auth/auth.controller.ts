@@ -130,4 +130,18 @@ export class AuthController implements OnModuleInit {
     );
     return isValid;
   }
+
+  @Get('unlogin')
+  async unlogin(@Res({ passthrough: true }) response: Response): Promise<void> {
+    response.cookie('refreshToken', '', {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+    });
+    response.cookie('token', '', {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+    });
+  }
 }

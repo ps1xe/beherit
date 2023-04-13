@@ -154,6 +154,8 @@ export class AuthService implements OnModuleInit {
     };
   }
 
+  //---------------------------------------------------------------
+
   //----------------------------------------------------------------
   async validate(token: string): Promise<ValidateResponseDto> {
     try {
