@@ -51,46 +51,23 @@ export class MlService implements OnModuleInit {
       }),
     );
 
-    // const key = execSync(
-    //   `python ..\\sound-generation\\src\\algoritm\\generate-sound.py ${genre} ${length}`,
-    // );
+    const len = Math.round(length / 0.256);
+    const pyLogs = await execSync(
+      `python ..\\sound-generation\\src\\algoritm\\generate.py ${genre} ${len}`,
+    );
 
-    // const sound = await lastValueFrom(
-    //   this.svcSounds.save({
-    //     ...newSound.data,
-    //     key: key.toString().trim(),
-    //     loaded: true,
-    //   }),
-    // );
+    const linesLogs = pyLogs.toString().split('\r');
 
-    // try {
-    //   fs.unlink(
-    //     '..\\sound-generation\\src\\algoritm\\generated\\tmp\\generated-output.mid',
-    //   );
-    // } catch (exception) {
-    //   console.log('Temporary midi file not found!');
-    // }
+    const key = linesLogs[linesLogs.length - 2];
 
-    // return {};
+    const sound = await lastValueFrom(
+      this.svcSounds.save({
+        ...newSound.data,
+        key: key.toString().trim(),
+        loaded: true,
+      }),
+    );
 
-    //Искусственная задержка(аля типа генерация)
-    const result = new Promise((resolve) => {
-      setTimeout(async () => {
-        console.log('Задержка в 5 секунд завершена');
-        const key = randomUUID();
-
-        const sound = await lastValueFrom(
-          this.svcSounds.save({
-            ...newSound.data,
-            key: key.toString().trim(),
-            loaded: true,
-          }),
-        );
-
-        resolve({});
-      }, 5000);
-    });
-
-    return result;
+    return {};
   }
 }
